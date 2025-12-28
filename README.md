@@ -1,5 +1,7 @@
 # Geometric Encoded Medium (GEM) Framework
 
+##
+
 ### A Geometric Encoded Medium (GEM) Impedance Framework for Physics in Rust
 
 > "The universe is a perfect geometric circuit."
@@ -31,6 +33,7 @@ Complex phases handle extreme scales (e.g., Planck or black holes), rotating rea
 ## Quick Start
 
 Clone and build:
+
 ```bash
 git clone https://github.com/troydeville/gemphy.git
 cd gemphy
@@ -39,12 +42,14 @@ cargo doc --open  # View API docs
 ```
 
 Install via Cargo:
+
 ```toml
 [dependencies]
 gemphy = "0.1.0"
 ```
 
 Basic usage:
+
 ```rust
 use gemphy::GeometricEncodedMedium;
 
@@ -57,11 +62,11 @@ fn main() {
 
 ## Roadmap
 
-| Milestone | Tasks |
-|-----------|-------|
-| v0.3     | Add horn torus simulation; publish crate |
-| v0.4     | Interactive CLI; Python bindings |
-| v1.0     | Full predictions (e.g., dark matter as impedance) |
+| Milestone | Tasks
+|-----------|-------
+| v0.3      | Add horn torus simulation; publish crate
+| v0.4      | Interactive CLI; Python bindings
+| v1.0      | Full predictions (e.g., dark matter as impedance)
 
 ## 📦 Installation
 
@@ -458,3 +463,5 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details on issues, PRs, and developme
 ## ⚖️ License
 
 This project is licensed under GPL-3.0.
+
+---
