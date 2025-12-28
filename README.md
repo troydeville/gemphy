@@ -412,30 +412,6 @@ What happens inside a Black Hole or at the Planck Scale? Standard physics breaks
 
 <!-- end list -->
 
-```rust
-use gemphy::{GeometricEncodedMedium, GeometricKnot};
-
-fn main() {
-    let medium = GeometricEncodedMedium::new();
-    let mp = medium.m_p; // Planck Mass
-    
-    // Create two particles at the Planck Scale
-    let p1 = GeometricKnot::new(medium.clone(), mp, mp * medium.xi, 0.0, "Planck A");
-    let p2 = GeometricKnot::new(medium.clone(), mp, mp * medium.xi, 0.0, "Planck B");
-    
-    // Distance inside the Schwarzschild radius
-    let d = 0.5 * medium.l_p; 
-
-    let f_total = medium.calculate_total_force(&p1, &p2, d);
-
-    println!("--- Unified Force (Planck Scale) ---");
-    println!("Force Vector: {:.4e} + {:.4e}i N", f_total.re, f_total.im);
-    
-    if f_total.im.abs() > 0.0 {
-        println!("Status: Phase Transition (Information Storage / Spin)");
-    }
-}
-```
 
 ## 🧪 Testing the Laws of Physics
 

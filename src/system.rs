@@ -23,6 +23,7 @@ impl GemSystem {
     }
 
     pub fn step(&mut self, dt: f64) {
+        self.resolve_action(dt);
         self.action_accum += dt;
     }
 
@@ -56,11 +57,12 @@ impl GemSystem {
                 if dist.norm() < 1e-35 { continue; }
 
                 // 4. Calculate Unified Interaction (Gravity + EM via Xi)
-                let interaction = self.medium.calculate_interaction(
-                    p1.core.mass, 
-                    p2.core.mass, 
-                    dist
-                );
+                // let interaction = self.medium.calculate_interaction(
+                //     p1.core.mass, 
+                //     p2.core.mass, 
+                //     dist
+                // );
+                let interaction = self.medium.calculate_interaction(&p1.core, &p2.core, dist);
 
                 // 5. Apply Force to 4D Manifold
                 let f = interaction.force; // Complex Force

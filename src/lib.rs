@@ -198,6 +198,8 @@ impl ResonanceDecoder {
 
 #[cfg(test)]
 mod tests {
+    use std::f64::consts::SQRT_2;
+
     use crate::knot::ImpedanceField;
 
     use super::*;
@@ -339,28 +341,29 @@ mod tests {
         let dist = 1.496e11;
         let v_orb = (system.medium.g * M_SUN / dist).sqrt();
 
-        let pos: Spatial4D = Spatial4D::new(
-            Complex64::from(dist), Complex64::from(0.0), Complex64::from(0.0), Complex64::from(1.0)
-        );
-        let vel: Spatial4D = Spatial4D::new(
-            Complex64::from(0.0), Complex64::from(v_orb), Complex64::from(0.0), Complex64::from(1.0)
-        );
+        // 1. Define Sun at CENTER (0, 0, 0, w=1)
+        let sun_pos = Spatial4D::new(Complex64::from(0.0), Complex64::from(0.0), Complex64::from(0.0), Complex64::from(0.0));
+        let sun_vel = Spatial4D::zero();
+        
+        // 2. Define Earth at DISTANCE (d, 0, 0, w=1)
+        let earth_pos = Spatial4D::new(Complex64::from(dist/SQRT_2), Complex64::from(dist/SQRT_2), Complex64::from(dist/SQRT_2), Complex64::from(1.0));
+        let earth_vel = Spatial4D::new(Complex64::from(0.0), Complex64::from(v_orb), Complex64::from(0.0), Complex64::from(1.0));
 
         let sun_core = GeometricKnot::new(medium.clone(), M_SUN, system.medium.xi * M_SUN, 0.0, "Sun");
-        let sun = ImpedanceField::new(0, sun_core, pos, vel);
+        let sun = ImpedanceField::new(0, sun_core, sun_pos, sun_vel);
         system.add_particle(sun);
         
-        
         let earth_core = GeometricKnot::new(medium.clone(), M_EARTH, system.medium.xi * M_EARTH, 0.0, "Earth");
-        let earth = ImpedanceField::new(1, earth_core, pos, vel);
+        let earth = ImpedanceField::new(1, earth_core, earth_pos, earth_vel);
         system.add_particle(earth);
-        
+            
         let dt = 3600.0;
         system.step(dt);
         
         let new_earth = &system.particles[1];
         let new_dist = (new_earth.position.magnitude()*new_earth.position.magnitude())+ ((new_earth.position.magnitude() * new_earth.position.magnitude()));
         let drift = (new_dist - dist).abs() / dist;
+        println!("Drift: {}", drift);
         assert!(drift < 10e54); 
     }
 
@@ -394,6 +397,33 @@ mod tests {
             }
         }
     }
+
+    #[test]
+    fn test_dynamic_system_orbit2() {
+    let medium = GeometricEncodedMedium::new();
+    let mut system = GemSystem::new();
+
+    let dist = 1.496e11;
+    let v_orb = (system.medium.g * M_SUN / dist).sqrt();
+
+    // 1. Define Sun at CENTER (0, 0, 0, w=1)
+    let sun_pos = Spatial4D::new(Complex64::from(0.0), Complex64::from(0.0), Complex64::from(0.0), Complex64::from(1.0));
+    let sun_vel = Spatial4D::zero();
+    
+    // 2. Define Earth at DISTANCE (d, 0, 0, w=1)
+    let earth_pos = Spatial4D::new(Complex64::from(dist), Complex64::from(0.0), Complex64::from(0.0), Complex64::from(1.0));
+    let earth_vel = Spatial4D::new(Complex64::from(0.0), Complex64::from(v_orb), Complex64::from(0.0), Complex64::from(0.0));
+
+    let sun_core = GeometricKnot::new(medium.clone(), M_SUN, system.medium.xi * M_SUN, 0.0, "Sun");
+    let sun = ImpedanceField::new(0, sun_core, sun_pos, sun_vel);
+    system.add_particle(sun);
+    
+    let earth_core = GeometricKnot::new(medium.clone(), M_EARTH, system.medium.xi * M_EARTH, 0.0, "Earth");
+    let earth = ImpedanceField::new(1, earth_core, earth_pos, earth_vel);
+    system.add_particle(earth);
+    
+    // ... rest of test
+}
 }
 
 

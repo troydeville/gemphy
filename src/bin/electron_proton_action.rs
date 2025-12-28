@@ -23,7 +23,7 @@ fn main() -> std::io::Result<()> {
     let rg2 = (medium.gamma_p / (proton.mass * medium.alpha)).powi(2);
     let d = (rg1+rg2).sqrt();
 
-    let result = medium.calculate_interaction(m1, m2, d.into());
+    let result = medium.calculate_interaction(&electron, &proton, d.into());
 
     println!("electron: {:#?}", electron);
     println!("proton: {:#?}", proton);

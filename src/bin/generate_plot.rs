@@ -39,7 +39,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
         // B. GEM Unified Calculation (Using your Library)
         // This automatically applies Xi, Phase Rotation, and Complex projection
-        let res = med.calculate_interaction(sun.mass, earth.mass, d.into());
+        let res = med.calculate_interaction(&sun, &earth, d.into());
         
         // Write data: Distance, Newton, GEM(Real), GEM(Imag), Kappa(Real), Kappa(Imag)
         writeln!(file, "{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e}", 
