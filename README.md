@@ -106,8 +106,6 @@ fn main() {
     let earth = GeometricKnot::new(medium, 5.972e24, Complex64::new(0.0, 0.0), 6.371e6, "Earth");
 
     println!("--- Particle Topology ---");
-    // electron.print_analysis();  // Add this method if needed
-    // earth.print_analysis();
 }
 ```
 
@@ -181,7 +179,7 @@ The model derives the Gravitational Constant ($G$) not as a fundamental arbitrar
 
 $$
 G = \frac{Z_0}{c S \phi}
-[\frac{m^3}{kg s^2}]
+[\frac{m^3}{kg s^2}]
 $$
 
 - **Complex Unification Factor ($\Xi$):** A complex rotation relating field geometry to mass-charge equivalence.
@@ -204,6 +202,8 @@ $$m_p = e^{-14\pi} \left( 1 - \frac{1}{2^{11}-4} \right) m_P \left( 1 - \frac{4 
 
 - **Mass-Charge Equivalence ($Q$):** A unified charge definition based on mass  and the complex factor .
 $$Q = M \Xi$$
+
+![Mathematica Definitions](./images/mathematica_page1.png)
 
 To visualize force scaling (Newtonian vs. GEM-derived, log-log plot from Sun-Earth system):
 
@@ -403,6 +403,109 @@ fn main() {
 }
 ```
 
+#### C. Neutron Star Interaction (Test Mass-Neutron Star)
+
+This example demonstrates GEM's handling of strong gravitational fields near compact objects.
+
+```rust
+// From neutron_star_action binary
+// (Code snippet similar to above, with masses 1.0 kg and 2.78376e30 kg, d ≈10 km)
+```
+
+Output:
+
+```shell
+GeometricKnot {
+    name: "Test Mass",
+    mass: 1.0,
+    charge: Complex {
+        re: 9.467930309028682e-11,
+        im: -3.921745141602969e-11,
+    },
+    geometric_radius_a: 1.48523238761875e-27,
+    base_length: 7.909063641216323e-32,
+}
+GeometricKnot {
+    name: "Neutron Star",
+    mass: 2.78376e30,
+    charge: Complex {
+        re: 2.6356445677061682e20,
+        im: -1.0917197255388681e20,
+    },
+    geometric_radius_a: 4134.5305113575705,
+    base_length: 0.22016935001872348,
+}
+Result: GemInteractionResult {
+    q1: Complex {
+        re: 9.467930309028682e-11,
+        im: -3.921745141602969e-11,
+    },
+    q2: Complex {
+        re: 2.6356445677061682e20,
+        im: -1.0917197255388681e20,
+    },
+    q_total: Complex {
+        re: 2.6356445677061682e20,
+        im: -1.0917197255388681e20,
+    },
+    af1: Complex {
+        re: 5.481208021372526e-26,
+        im: -5.481208021372526e-26,
+    },
+    af2: Complex {
+        re: 152583.67641575984,
+        im: -152583.67641575984,
+    },
+    g1: Complex {
+        re: 4.719443850333546e-19,
+        im: -4.719443850333546e-19,
+    },
+    g2: Complex {
+        re: 4.719443850333546e-19,
+        im: -4.719443850333546e-19,
+    },
+    force: Complex {
+        re: 1313779901280.451,
+        im: -1313779901280.451,
+    },
+    curvature: Complex {
+        re: 0.9238795325112867,
+        im: -0.3826834323650898,
+    },
+    g_o: Complex {
+        re: 6.6743015e-11,
+        im: 0.0,
+    },
+    g_recovered: Complex {
+        re: 4.719443850333545e-11,
+        im: -4.719443850333546e-11,
+    },
+    mqr1_ev: Complex {
+        re: 1.1042001594518223e66,
+        im: 0.0,
+    },
+    mqr2_ev: Complex {
+        re: 3.966578151319878e35,
+        im: -2.496603636017335e19,
+    },
+    ratio1: Complex {
+        re: 1.0,
+        im: 0.0,
+    },
+    ratio2: Complex {
+        re: 2.5401140227122575e-31,
+        im: -1.5987729632635265e-47,
+    },
+    binding_energy_ev: Complex {
+        re: 1.4935909608875857e31,
+        im: 0.0,
+    },
+    schwarzschild_radius: 4134.5305113575705,
+    ratio_mr_d: 0.41345305113575703,
+    is_complex: true,
+}
+```
+
 ### 5. The Unified Force (Complex Phase Engine)
 
 What happens inside a Black Hole or at the Planck Scale? Standard physics breaks down. GEM handles this by rotating the force vector into the **Imaginary Plane**.
@@ -410,8 +513,9 @@ What happens inside a Black Hole or at the Planck Scale? Standard physics breaks
 - **Real Force:** Linear Acceleration (Push/Pull).
 - **Imaginary Force:** Rotational Action (Spin/Memory).
 
-<!-- end list -->
+Kappa ($\kappa$) in GEM is similar to Einstein's curvature in general relativity, coupling mass to geometry via the complex unification factor $\Xi$. It derives as $\kappa = \Xi \frac{M + m}{Q_{sh} + q_{sh}}$, where $Q_{sh} = \Xi M$ (shadow charge), simplifying to a phased unit complex in gravity-dominated regimes.
 
+<!-- end list -->
 
 ## 🧪 Testing the Laws of Physics
 
