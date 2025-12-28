@@ -1,4 +1,4 @@
-use gemphy::{Complex64, GeometricKnot, GeometricEncodedMedium};
+use gemphy::{GeometricKnot, GeometricEncodedMedium};
 
 fn main() -> std::io::Result<()> {
 

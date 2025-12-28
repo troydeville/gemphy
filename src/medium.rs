@@ -109,9 +109,6 @@ impl GeometricEncodedMedium {
         
         // 2. Apply the Geometry Scaling: v = (Gamma_p / m) * f
         // Gamma_p units in GEM Code are [C^2 * Omega * s / m] -> We need to ensure unit consistency.
-        // In the Python/Mathematica GEM suite, Gamma_p is often defined as e^2/alpha_p (Action-like).
-        // Let's rely on the raw magnitude multiplication as implied by your scalar snippet.
-        
         (self.gamma_p / mass) * f_hz
     }
 
@@ -127,7 +124,6 @@ impl GeometricEncodedMedium {
         // Note: We need to be careful with units. 
         // In Rust, gamma_p is e^2/alpha_p. 
         // Let's use the raw components to match your Mathematica output order magnitude.
-        
         let f_hz = self.calculate_mass_frequency(mass);
         
         // Based on In[1860]: Result is ~2.18e6
@@ -378,17 +374,11 @@ impl GeometricEncodedMedium {
     //     }
     // }
 
-    pub fn calculate_interaction(&self, m1: f64, m2: f64, d: f64) -> GemInteractionResult {
-        // 1. LIMITS: Planck Floor & Coulomb Wall
-        let d_planck = self.l_p;
-        // let d_coulomb = p1.coulomb_radius + p2.coulomb_radius;
-        let d_clamped = d;
-        // let d_clamped = d.max(d_planck).max(d_coulomb);
-        
+    pub fn calculate_interaction(&self, m1: f64, m2: f64, d: f64) -> GemInteractionResult {        
 
         // 2. Schwarzschild Radius
         let mr = (2.0 * self.g * (m1 + m2)) / self.c.powi(2);
-        let ratio_mr_d = mr / d_clamped;
+        let ratio_mr_d = mr / d;
         
         let ratio_mr_d_safe = if (1.0 - ratio_mr_d).abs() < 1e-15 {
             1.0 - 1e-15 
@@ -413,8 +403,8 @@ impl GeometricEncodedMedium {
 
         // 5. Action Frequencies
         let sqrt2_div2 = SQRT_2 / 2.0;
-        let geom_denom_1 = 4.0 * PI * self.epsilon_o * d_clamped.powi(3) * m1;
-        let geom_denom_2 = 4.0 * PI * self.epsilon_o * d_clamped.powi(3) * m2;
+        let geom_denom_1 = 4.0 * PI * self.epsilon_o * d.powi(3) * m1;
+        let geom_denom_2 = 4.0 * PI * self.epsilon_o * d.powi(3) * m2;
         let alpha_2pi = self.alpha / (2.0 * PI);
 
         let af1 = (Complex64::new(sqrt2_div2, 0.0) * q1.powi(2) * alpha_2pi) / Complex64::from(geom_denom_1);
@@ -444,7 +434,7 @@ impl GeometricEncodedMedium {
         let numer_be = g_recovered * self.e.powi(2);
         
         // Denominator: (Xi * (2 - Kappa))^2 * d
-        let denom_be = self.xi.powi(2) * d_clamped * SQRT_2;
+        let denom_be = self.xi.powi(2) * d * SQRT_2;
         
         let binding_energy_joules = numer_be / denom_be;
         let binding_energy_ev = binding_energy_joules / self.e;
@@ -454,25 +444,13 @@ impl GeometricEncodedMedium {
         let mqr1_joules = Complex64::from(mqr_coeff) * (q2.powi(2) / Complex64::from(m2));
         let mqr2_joules = Complex64::from(mqr_coeff) * (q1.powi(2) / Complex64::from(m1));
 
-
-
-        // let m1_c2 = Complex64::from(m1 * self.c.powi(2));
-        // let m2_c2 = Complex64::from(m2 * self.c.powi(2));
-
         let mqr1_ev = mqr1_joules / self.e;
-        let mqr2_ev = mqr2_joules / self.e;
-        
-        // let ratio1 = (mqr1_joules - m1_c2) / mqr1_ev;
-        // let ratio2 = (mqr2_joules - m2_c2) / mqr2_ev;
-
-        
+        let mqr2_ev = mqr2_joules / self.e;        
 
         let m1_c2_ev = (m1 * self.c.powi(2)) / self.e; // m1 c^2 in eV
         let m2_c2_ev = (m2 * self.c.powi(2)) / self.e; // m1 c^2 in eV
         let ratio1 = mqr1_ev / (mqr1_ev + Complex64::new(m1_c2_ev, 0.0)); // New form
         let ratio2 = mqr2_ev / (mqr2_ev + Complex64::new(m2_c2_ev, -0.0)); // Symmetric for generality
-
-    // Then binding_energy_ev = base_binding * if m1 < m2 { ratio1 } else { ratio2 };
 
         GemInteractionResult {
             q1, q2, q_total,

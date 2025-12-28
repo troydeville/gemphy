@@ -1,15 +1,10 @@
-use std::f64::consts::{PI, SQRT_2};
-
 use gemphy::{Complex64, GeometricKnot, GeometricEncodedMedium};
-use gemphy::GemInteractionResult;
 use num_complex::ComplexFloat;
 
 fn main() -> std::io::Result<()> {
 
     const M_ELECTRON: f64 = 9.1093837139e-31;
     const M_PROTON: f64 = 1.67262192595e-27;
-
-    
 
     let medium = GeometricEncodedMedium::new();
     let m1 = M_ELECTRON;

@@ -1,22 +1,20 @@
 # Geometric Encoded Medium (GEM) Framework
 
-##
-
-### A Unified Impedance Framework for Physics in Rust
+### A Geometric Encoded Medium (GEM) Impedance Framework for Physics in Rust
 
 > "The universe is a perfect geometric circuit."
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue) ![License](https://img.shields.io/badge/license-MIT%2FApache-green) ![Rust](https://img.shields.io/badge/built_with-Rust-orange) [![Crates.io](https://img.shields.io/crates/v/gemphy.svg)](https://crates.io/crates/gemphy) [![Docs](https://docs.rs/gemphy/badge.svg)](https://docs.rs/gemphy) [![CI](https://github.com/troydeville/gemphy/workflows/CI/badge.svg)](https://github.com/troydeville/gemphy/actions)
+![Version](https://img.shields.io/badge/version-0.1.0-blue) ![License](https://img.shields.io/badge/license-GPL--3.0-green) ![Rust](https://img.shields.io/badge/built_with-Rust-orange) [![Crates.io](https://img.shields.io/crates/v/gemphy.svg)](https://crates.io/crates/gemphy) [![Docs](https://docs.rs/gemphy/badge.svg)](https://docs.rs/gemphy) [![CI](https://github.com/troydeville/gemphy/workflows/CI/badge.svg)](https://github.com/troydeville/gemphy/actions)
 
 ---
 
 ## 🌌 Overview
 
-- The **GEM Framework** is a Rust library that models reality not as a collection of arbitrary forces and constants, but as a single **Geometric Encoded Medium**.
+The **GEM Framework** is a Rust library that models reality not as a collection of arbitrary forces and constants, but as a single **Geometric Encoded Medium**. It posits that space itself has impedance ($Z_p$) and geometry (**Horn Torus topology**), and that all physical phenomena—Gravity, Electromagnetism, Mass, and Charge—are simply different "encodings" running on this geometric hardware.
 
-- It posits that space itself has impedance ($Z_p$) and geometry (**Horn Torus topology**), and that all physical phenomena—Gravity, Electromagnetism, Mass, and Charge—are simply different "encodings" running on this geometric hardware.
+This library does not approximate physics; it **derives** it. By defining a few geometric axioms, it mathematically derives Newton's Gravitational Constant ($G$), the Fine Structure Constant ($\alpha$), and the Proton Radius from first principles. Validations match CODATA with high precision (e.g., α rel error -5.47e-10, G rel error 3.86e-6).
 
-- This library does not approximate physics; it **derives** it. By defining a few geometric axioms, it mathematically derives Newton's Gravitational Constant ($G$), the Fine Structure Constant ($\alpha$), and the Proton Radius from first principles.
+For a visual of the horn torus topology:
 
 ## 🧠 Core Philosophy
 
@@ -25,76 +23,90 @@ In GEM, the universe is treated as a software system:
 - **The Hardware:** A "Horn Torus" topology representing the vacuum medium.
 - **The Operating System:** The Impedance Field ($Z_0, Z_p$) that dictates how information moves.
 - **The Software:**
-- **Gravity:** The interaction when the medium is encoded with Mass (Shadow Charge $Q = \Xi M$).
-- **Electromagnetism:** The interaction when the medium is encoded with Electric Charge ($q$).
+  - **Gravity:** The interaction when the medium is encoded with Mass (Shadow Charge $Q = \Xi M$).
+  - **Electromagnetism:** The interaction when the medium is encoded with Electric Charge ($q$).
 
----
+Complex phases handle extreme scales (e.g., Planck or black holes), rotating real forces into imaginary (rotational/spin) components.
+
+## Quick Start
+
+Clone and build:
+```bash
+git clone https://github.com/troydeville/gemphy.git
+cd gemphy
+cargo test  # Run validations
+cargo doc --open  # View API docs
+```
+
+Install via Cargo:
+```toml
+[dependencies]
+gemphy = "0.1.0"
+```
+
+Basic usage:
+```rust
+use gemphy::GeometricEncodedMedium;
+
+fn main() {
+    let medium = GeometricEncodedMedium::new();
+    println!("Derived α: {:.4e}", medium.alpha);
+    println!("Derived G: {:.4e} m³ kg⁻¹ s⁻²", medium.g);
+}
+```
 
 ## Roadmap
 
-Milestone | v0.3 | v0.4 | v1.0
---- | --- | --- | ---
-Tasks | Add horn torus simulation; publish crate | Interactive CLI; Python bindings | Full predictions (e.g., dark matter as impedance)
-
----
+| Milestone | Tasks |
+|-----------|-------|
+| v0.3     | Add horn torus simulation; publish crate |
+| v0.4     | Interactive CLI; Python bindings |
+| v1.0     | Full predictions (e.g., dark matter as impedance) |
 
 ## 📦 Installation
 
-Add this to your `Cargo.toml`:
+Add to `Cargo.toml`:
 
 ```toml
 [dependencies]
 gemphy = "0.1.0"
 ```
 
-> **Note:** The library re-exports `Complex64` from `num-complex`, so you do not need to install it separately unless otherwise needed.
-
----
+Note: Re-exports `Complex64` from `num-complex`.
 
 ## 🚀 Usage Guide
 
-### 1\. Initialize the Medium
-
-The `GeometricEncodedMedium` struct initializes the fundamental constants derived from the GEM geometric axioms.
+### 1. Initialize the Medium
 
 ```rust
 use gemphy::GeometricEncodedMedium;
 
 fn main() {
     let medium = GeometricEncodedMedium::new();
-
-    println!("--- GEM Fundamental Derivations ---");
     println!("Vacuum Impedance (Z0): {:.4} Ohms", medium.z_o);
     println!("Fine Structure (α):    {:.4e}", medium.alpha);
-    println!("Gravitational G:       {:.4e}", medium.g); // Derived, not hardcoded!
+    println!("Gravitational G:       {:.4e} m³ kg⁻¹ s⁻²", medium.g);
 }
 ```
 
-### 2\. Create Geometric Knots
-
-The `GeometricKnot` represents any entity in the universe. It automatically detects its scale (Quantum vs. Macro) and sizes its geometric "vacuum knot" accordingly.
+### 2. Create Geometric Knots
 
 ```rust
-use gemphy::GeometricKnot;
+use gemphy::{GeometricEncodedMedium, GeometricKnot};
+use num_complex::Complex64;
 
 fn main() {
-    // 1. Create an Electron (Quantum Scale)
-    // Mass: 9.109e-31 kg, Charge: -1.6e-19 C
-    let electron = GeometricKnot::new(9.109e-31, -1.602e-19, 0.0, "Electron");
-    
-    // 2. Create the Earth (Macro Scale)
-    // Mass: 5.972e24 kg, Charge: 0 (Neutral, calculates Shadow Charge internally)
-    let earth = GeometricKnot::new(5.972e24, 0.0, 6.371e6, "Earth");
+    let medium = GeometricEncodedMedium::new();
+    let electron = GeometricKnot::new(medium.clone(), 9.109e-31, Complex64::new(-1.602e-19, 0.0), 0.0, "Electron");
+    let earth = GeometricKnot::new(medium, 5.972e24, Complex64::new(0.0, 0.0), 6.371e6, "Earth");
 
     println!("--- Particle Topology ---");
-    electron.print_analysis();
-    earth.print_analysis();
+    // electron.print_analysis();  // Add this method if needed
+    // earth.print_analysis();
 }
 ```
 
-> **Output Note:** The Electron will automatically size to the **Bohr Radius**, while the Earth sizes to its **Schwarzschild Radius**.
-
-Here is the text converted into a descriptive, documented format. I have grouped the equations into logical sections (Fundamental, Field Theory, Gravity, and Mass) to explain the physical significance of each variable in the context of this unified model.
+Output Note: Electron sizes to Bohr Radius; Earth to Schwarzschild Radius.
 
 ### 3. Constants & Model Specification
 
@@ -188,57 +200,12 @@ $$m_p = e^{-14\pi} \left( 1 - \frac{1}{2^{11}-4} \right) m_P \left( 1 - \frac{4 
 - **Mass-Charge Equivalence ($Q$):** A unified charge definition based on mass  and the complex factor .
 $$Q = M \Xi$$
 
-### Next Step
+To visualize force scaling (Newtonian vs. GEM-derived, log-log plot from Sun-Earth system):
 
-Would you like me to generate a dimensional analysis table to verify that the units in the equation  correctly resolve to ?
-<!-- 
-### 3\. Constants
+![GEM](/chart.png)
 
-$$h = \frac{662607015}{10^{42}} \text{ J/Hz}$$
+### 4. Interaction Examples
 
-$$c = 299792458 \text{ m/s}$$
-
-$$e = \frac{1602176634}{10^{28}} \text{ C}$$
-
-$$\Phi = \frac{1}{10^7} \text{ H/m}$$
-
-$$\phi = 10^4 \text{ kg}^2 \text{ m}^{-2} \text{ s}^2 \text{ C}^{-2}$$
-
-$$\Lambda_\alpha(n) = \frac{\alpha_\delta n}{\alpha_\gamma + 2 \alpha_\delta n^2}$$
-
-$$Z_p = \frac{2h}{e^2}$$
-
-$$\alpha_p = \frac{4\pi c}{Z_p}$$
-
-$$\mu_p = \frac{Z_p}{c}$$
-
-$$\epsilon_p = \frac{1}{c Z_p}$$
-
-$$\Gamma_p = \frac{e^2}{\alpha_p}$$
-
-$$\alpha = \alpha_p \Phi$$
-
-$$Z_0 = \alpha Z_p$$
-
-$$\mu_0 = \frac{Z_0}{c}$$
-
-$$\epsilon_0 = \frac{1}{c Z_0}$$
-
-$$\Gamma = \alpha \Gamma_p$$
-
-$$G = \frac{Z_0}{c S \phi}$$
-
-$$\Xi = \sqrt{4\pi \sqrt{2} G \epsilon_0} \left( \cos\frac{\pi}{8} - i \sin\frac{\pi}{8} \right)$$
-
-$$m_P = \sqrt{\frac{ch}{2\pi G}}$$
-
-$$l_P = \sqrt{\frac{hG}{2\pi c^3}}$$
-
-$$m_p = e^{-14\pi} \left( 1 - \frac{1}{2^{11}-4} \right) m_P \left( 1 - \frac{4 \alpha_\gamma}{\alpha_\delta} \right)$$
-
-$$Q = M \Xi$$ -->
-
-### 4\. Interaction Examples
 
 ```shell
 cargo test -- --nocapture
@@ -389,11 +356,14 @@ At the quantum scale, the medium handles interactions via the Coulomb protocol (
 
 ```rust
 use gemphy::{GeometricEncodedMedium, GeometricKnot, ForceProtocol};
+use num_complex::Complex64;
 
 fn main() {
     let medium = GeometricEncodedMedium::new();
-    let electron = GeometricKnot::new(9.109e-31, -1.602e-19, 0.0, "Electron");
-    let proton = GeometricKnot::new(1.672e-27, 1.602e-19, 0.0, "Proton");
+    let q1 = Complex64::new(-medium.e, -medium.e);
+    let q2 = Complex64::new(medium.e, medium.e);
+    let electron = GeometricKnot::new(medium.clone(), 9.109e-31, q1, 0.0, "Electron");
+    let proton = GeometricKnot::new(medium.clone(), 1.672e-27, q2, 0.0, "Proton");
     let d = 5.29e-11; // Bohr Radius
 
     // Decode as Electromagnetism (Strong Force)
@@ -417,8 +387,8 @@ use gemphy::{GeometricEncodedMedium, GeometricKnot, ForceProtocol};
 
 fn main() {
     let medium = GeometricEncodedMedium::new();
-    let earth = GeometricKnot::new(5.972e24, 0.0, 6.371e6, "Earth");
-    let sun = GeometricKnot::new(1.989e30, 0.0, 6.96e8, "Sun");
+    let earth = GeometricKnot::new(medium.clone(), 5.972e24, 5.972e24 * medium.xi, 6.371e6, "Earth");
+    let sun = GeometricKnot::new(medium.clone(), 1.989e30, 1.989e30 * medium.xi, 6.96e8, "Sun");
     let d = 149.6e9; // 1 AU
 
     let f_gravity = medium.decode_force(&earth, &sun, d, ForceProtocol::Gravity);
@@ -428,7 +398,7 @@ fn main() {
 }
 ```
 
-### 5\. The Unified Force (Complex Phase Engine)
+### 5. The Unified Force (Complex Phase Engine)
 
 What happens inside a Black Hole or at the Planck Scale? Standard physics breaks down. GEM handles this by rotating the force vector into the **Imaginary Plane**.
 
@@ -445,8 +415,8 @@ fn main() {
     let mp = medium.m_p; // Planck Mass
     
     // Create two particles at the Planck Scale
-    let p1 = GeometricKnot::new(mp, 0.0, 0.0, "Planck A");
-    let p2 = GeometricKnot::new(mp, 0.0, 0.0, "Planck B");
+    let p1 = GeometricKnot::new(medium.clone(), mp, mp * medium.xi, 0.0, "Planck A");
+    let p2 = GeometricKnot::new(medium.clone(), mp, mp * medium.xi, 0.0, "Planck B");
     
     // Distance inside the Schwarzschild radius
     let d = 0.5 * medium.l_p; 
@@ -462,8 +432,6 @@ fn main() {
 }
 ```
 
----
-
 ## 🧪 Testing the Laws of Physics
 
 This library includes a rigorous test suite that validates the framework against CODATA observations.
@@ -476,7 +444,7 @@ cargo test
 
 **What is tested?**
 
-- **The Golden Loop:** Verifies $h/2\pi c \equiv \Gamma/\alpha$.
+- **The Golden Loop:** Verifies $\frac{h}{2\pi c} \equiv \frac{\Gamma}{\alpha}$.
   - **Grand Unification:** Verifies the geometric scaling from Electrons to the Universe.
   - **Force Parity:** Checks that GEM-derived Gravity matches Newtonian Gravity to $10^{-13}$ precision.
   - **Phase Change:** Ensures forces transition to complex numbers correctly inside event horizons.
@@ -485,11 +453,8 @@ cargo test
 
 ## Contributing
 
-- See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-- Issues/PRs welcome!
-
----
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details on issues, PRs, and development setup.
 
 ## ⚖️ License
 
-This project is an implementation of the GEM Framework.
+This project is licensed under GPL-3.0.

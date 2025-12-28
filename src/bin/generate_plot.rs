@@ -2,7 +2,7 @@
 use std::error::Error;
 use std::fs::File;
 use std::io::Write;
-use gemphy::{GeometricEncodedMedium, GeometricKnot, ForceProtocol}; // Use your lib types
+use gemphy::{GeometricEncodedMedium, GeometricKnot}; // Use your lib types
 
 const M_SUN: f64 = 1.9884e30;
 

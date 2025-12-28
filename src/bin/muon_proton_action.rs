@@ -1,15 +1,10 @@
-use std::f64::consts::SQRT_2;
-
-use gemphy::{Complex64, GeometricKnot, GeometricEncodedMedium};
-use gemphy::GemInteractionResult;
+use gemphy::{GeometricKnot, GeometricEncodedMedium};
 use num_complex::ComplexFloat;
 
 fn main() -> std::io::Result<()> {
 
     const M_MUON: f64 = 1.883531627e-28;
     const M_PROTON: f64 = 1.67262192595e-27;
-
-    
 
     let medium = GeometricEncodedMedium::new();
     let m1 = M_MUON;

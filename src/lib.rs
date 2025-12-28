@@ -1,3 +1,5 @@
+#![doc = include_str!("../README.md")]
+
 /// GEM Framework: Horn Torus & Unified Physics Implementation
 /// Based on GEM Framework Python Suite (Version 3.0).
 /// 
