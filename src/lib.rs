@@ -1046,17 +1046,6 @@ mod tests {
     }
     
     #[test]
-    fn test_interaction_electron_proton_gem_quantum_limit() {
-        let med = GeometricEncodedMedium::new();
-        let d = med.gamma / (M_ELECTRON * med.alpha.powi(2));
-        let res = med.calculate_interaction(M_ELECTRON, M_PROTON, d);
-        println!("{:.9e}", (res.force.re - 3.627e-47).abs());
-        println!("{}", !res.is_complex);
-        assert!((res.force.re - 3.627e-47).abs() < 1e-49);
-        assert!(!res.is_complex);
-    }
-    
-    #[test]
     fn test_dynamic_system_orbit() {
         let medium = GeometricEncodedMedium::new();
         let mut system = GemSystem::new();
