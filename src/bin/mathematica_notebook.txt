@@ -1,0 +1,446 @@
+In[1475]:= (*Electron Mass*)
+ElectronMass=Quantity[9.1093837139*10^-31, "Kilograms"];
+(*Electron Radius*)
+ElectronRadius = Quantity[2.8179403205*10^-15, "Meters"];
+(*Proton Mass*)
+ProtonMass=Quantity[1.67262192595*10^-27, "Kilograms"];
+NeutronMass=Quantity[1.67492750056*10^-27,"Kilograms"];
+TauMass=Quantity[3.16754*10^-27, "Kilograms"];
+MuonMass = Quantity[1.883531627*10^-28, "Kilograms"];
+EarthMass = Quantity[5.97219*10^24, "Kilograms"];
+EarthRadius = Quantity[6371.0*10^3, "Meters"];
+SunMass = Quantity[1988400.0*10^24, "Kilograms"];
+SunRadius = Quantity[695700.0*10^3, "Meters"];
+MarsMass = Quantity[0.64169*10^24, "Kilograms"];
+MarsRadius = Quantity[109.2*10^3, "Meters"];
+
+SunEarthDistance = Quantity[147000*10^6, "Meters"];
+SunMarsDistance = Quantity[228000*10^6, "Meters"];
+In[1489]:= \[CapitalLambda]\[Alpha][n_]:=(\[Alpha]\[Delta] n)/((2 \[Alpha]\[Delta] n^2)+\[Alpha]\[Gamma]);
+
+\[Alpha]\[Gamma]=4580703784999263461548761 \[Pi];
+\[Alpha]\[Delta]=1972044687500000000000000000;
+\[Alpha]=\[Alpha]\[Gamma]/\[Alpha]\[Delta];
+h=Quantity[662607015*10^-42, ("Joules")/("Hertz")];
+e=Quantity[1602176634*10^-28, "Coulombs"];
+c= Quantity[299792458, ("Meters")/("Seconds")];
+S=2^(1/2) \[Pi]^(1/4);
+\[CapitalPhi]=\[Alpha] (2 h)/(4\[Pi] c e^2);
+\[Phi] =UnitConvert[Zo/(4\[Pi]*10^-11 c Quantity[1, ("Meters")^3/("Kilograms" ("Seconds")^2)]), (("Kilograms" "Seconds")/("Coulombs" "Meters"))^2];
+Zp=(2 h)/e^2;
+\[Alpha]p=(4 \[Pi] c)/Zp;
+
+\[Mu]p=1/c Zp;
+\[Epsilon]p=1/c 1/Zp;
+\[CapitalGamma]p=(2 h)/(4\[Pi] c);
+\[CapitalGamma]p==e^2/\[Alpha]p;
+(* Fine Structure Constant *)
+\[Alpha]=\[Alpha]p \[CapitalPhi] ;
+
+Zo=Zp \[Alpha];
+\[Mu]o=1/c Zo;
+\[Epsilon]o=1/c 1/Zo;
+
+\[CapitalGamma]=UnitConvert[e^2 \[CapitalPhi], "Kilograms" "Meters"];
+\[CapitalGamma]==\[CapitalGamma]p \[Alpha]
+
+G=UnitConvert[(4\[Pi])/S \[CapitalPhi]/\[Phi], ("Meters")^3/("Kilograms" ("Seconds")^2)];
+mP=UnitConvert[Sqrt[( h c)/(2\[Pi] G)], "Kilograms"];
+lP=UnitConvert[Sqrt[(h G)/(2\[Pi] c^3)], "Meters"];
+(*\[CapitalXi]=UnitConvert[Sqrt[8\[Pi] G \[Epsilon]o], ("Coulombs")/("Kilograms")];*)
+\[CapitalXi]=UnitConvert[Sqrt[(8\[Pi] G \[Epsilon]o)-I (8\[Pi] G \[Epsilon]o)]/Sqrt[2], ("Coulombs")/("Kilograms")]
+qP=mP \[CapitalXi]
+Zg=(4\[Pi] \[Alpha] S c e \[CapitalPhi])/(mP \[CapitalXi]) 2Sqrt[\[Pi]]
+me=UnitConvert[mP/23892177732494625341440, "Kilograms"];
+
+mp=UnitConvert[mP/13012086673584404467, "Kilograms"];
+
+m\[Mu]=UnitConvert[mP/115550496527972941829, "Kilograms"];
+Out[1510]= True
+Out[1514]= (Sqrt[1-I] \[Pi]^(3/8))/(14989622900 2^(1/4))C/kg
+Out[1515]= Sqrt[(18931629/42827494-(18931629 I)/42827494)/\[Pi]]/200000000000000000C
+Out[1516]= (183350483391640886297434998598372545077091 \[Pi]^(11/4))/(15406599121093750000000000000000000000000000 Sqrt[(6310543/64241241-(6310543 I)/64241241)/\[Pi]])J/(Hz\[ThinSpace](C)^2)
+In[1520]:= Clear[m1, m2, mr1, mr2, q1, q2,qm1, qm2, af1, af2, d,g1, g2, g, fg1, fg2, d, mr, n, r1, r2,bindingEnergy, mqr1Energy, mqr2Energy, ratio1, ratio2, ratio, \[Kappa]];
+m1 = SetPrecision[mP,16] ;
+m2 = SetPrecision[SunMass *1.4,16];
+(*d=\[CapitalGamma]/(m1 \[Alpha]^2);*)
+(*If[m1 < m2, d=\[CapitalGamma]/(m1 \[Alpha]^2), d=\[CapitalGamma]/(m2 \[Alpha]^2)]*)
+(*d=SunEarthDistance;*)
+(*d=SunMarsDistance;*)
+d=Quantity[10^4, "Meters"];
+qm1=UnitConvert[\[CapitalGamma]/m1, "Meters"];
+qm2=UnitConvert[\[CapitalGamma]/m2, "Meters"];
+mr=(2 G (m1+m2))/c^2;
+mr1=(2 G m1)/c^2;
+mr2=(2G m2)/c^2;
+
+r1=mr1+qm1;
+r2=mr2+qm2;
+Print["r1 = ", r1, ", r2 = ", r2];
+r12 = r1 + r2;
+Print["r1 + r2 = ", r12];
+q1 =UnitConvert[1/Sqrt[1-I] Sqrt[ ((8\[Pi] G m1^2 \[Epsilon]o)/Sqrt[1-mr/d])], "Coulombs"];
+
+q2 =UnitConvert[1/Sqrt[1-I] Sqrt[ ((8\[Pi] G m2^2 \[Epsilon]o)/Sqrt[1-mr/d])], "Coulombs"];
+q1 m2 == q2 m1;
+
+af1=UnitConvert[Sqrt[2]/2 q1^2/(4\[Pi] \[Epsilon]o (d^3) m1 ) \[Alpha]/(2\[Pi]), ("Hertz")^2];
+af2=UnitConvert[Sqrt[2]/2 q2^2/(4\[Pi] \[Epsilon]o (d^3) m2 ) \[Alpha]/(2\[Pi]), ("Hertz")^2];
+
+g1=UnitConvert[af1 (2\[Pi] d)/\[Alpha], ("Meters")/("Seconds")^2];
+g2=UnitConvert[af2 (2\[Pi] d)/\[Alpha], ("Meters")/("Seconds")^2];
+g=UnitConvert[(af1+af2) (2\[Pi] d)/\[Alpha], ("Meters")/("Seconds")^2];
+fg1=UnitConvert[g1*m2, "Newtons"];
+fg2=UnitConvert[g2*m1, "Newtons"];
+fg1==fg2;
+(* Curvature of impedance or something, \[Kappa] *)
+\[Kappa] = ((m1+m2) \[CapitalXi] )/(q1+q2);
+(*\[Kappa] = ((m1+m2) \[CapitalXi]  )/(q1+q2);*)
+Go=G/\[Kappa]^2;
+
+(*Go=((q1+q2)/(2(m1+m2)))^2*1/(2\[Pi] \[Epsilon]o);*)
+
+G  /Go ==\[Kappa]^2;
+
+bindingEnergy = UnitConvert[e^2/(2*4\[Pi]*\[Epsilon]o*d), "Electronvolts"];
+mqr1Energy  =UnitConvert[ c^2 /(8\[Pi] \[Epsilon]o G   ) q2^2/m2, "Electronvolts"];
+mqr2Energy  =UnitConvert[ c^2 /(8\[Pi] \[Epsilon]o G   ) q1^2/m1, "Electronvolts"];
+ratio1=(mqr1Energy - m1 c^2)/mqr1Energy;
+ratio2=(mqr2Energy - m2 c^2)/mqr2Energy;
+ratio=Abs[ratio1-ratio2];
+bindingEnergy=If[m1 > m2, bindingEnergy/ratio2, bindingEnergy/ratio1];
+
+Print["G = ",SetPrecision[Go \[Kappa]^2,16]];
+Print["Go = ",Go];
+
+Print["m1 = ", m1];
+Print["m2 = ", m2];
+
+Print["q1 = ", q1];
+Print["q2 = ", q2];
+Print["Seperation: ", d];
+Print["q1 * m2 = q2 * m1 : ", q1 m2 == q2 m1, ", q1 m2 = ", q1 m2, ", q2 m1 = ", q2 m1];
+
+Print["Gravitational Acceleration, g1 = ", g1];
+Print["Gravitational Acceleration, g2 = ", g2];
+Print["Gravitational Acceleration ag: ", g];
+Print["Gravitational Force m1 -> m2: ", fg1];
+Print["Gravitational Force m2 -> m1: ", fg2];
+Print["fg1 = fg2 : ", fg1==fg2, ", fg1 = ", fg1, ", fg2 = ", fg2];
+Print["Gravitational Force: ", fg1];
+Print["Binding energy = ", bindingEnergy];
+
+Print["ratio1 = ", SetPrecision[ratio1,16]];
+Print["ratio2 = ", SetPrecision[ratio2,16]];
+
+Print["curvature (\[Kappa]): ", SetPrecision[Abs[\[Kappa]],32 ]];
+Print["curvature (\[Kappa]): ", SetPrecision[\[Kappa],32 ]];
+Print["curvature (\[Kappa]) = 1 ? ", \[Kappa]==1];
+Print["G  /Go  == \[Kappa]^2 : ",G  /Go ==\[Kappa]^2, " --> ",G  /Go ];
+Print["\[Kappa] Go = ",UnitSimplify[Go \[Kappa]]];
+Print["Sqrt[\[Kappa] ] Go = ",UnitSimplify[Go Sqrt[\[Kappa]]]];
+Print["q1/m1 = ",q1/m1];
+Print["q2/m2 = ",q2/m2];
+Print["\[CapitalXi] = ",\[CapitalXi], " = ", SetPrecision[\[CapitalXi] , 32]];
+During evaluation of In[1520]:= r1 = 3.244310685572556*10^-35m, r2 = 4134.545522256763m
+During evaluation of In[1520]:= r1 + r2 = 4134.545522256763m
+During evaluation of In[1520]:= G = (6.674325731836412*10^-11+0.*10^-27 I)(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+During evaluation of In[1520]:= Go = (0.*10^-26+8.7147827228971*10^-11 I)(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+During evaluation of In[1520]:= m1 = 2.176430147259908*10^-8kg
+During evaluation of In[1520]:= m2 = 2.783760000000000*10^30kg
+During evaluation of In[1520]:= q1 = (2.354643466399834*10^-18+9.75325258336008*10^-19 I)C
+During evaluation of In[1520]:= q2 = (3.011703501845694*10^20+1.247488436311030*10^20 I)C
+During evaluation of In[1520]:= Seperation: 10000m
+During evaluation of In[1520]:= q1 * m2 = q2 * m1 : True, q1 m2 = (6.55476229602520*10^12+2.71507144114545*10^12 I)kg\[ThinSpace]C, q2 m1 = (6.55476229602520*10^12+2.71507144114545*10^12 I)kg\[ThinSpace]C
+During evaluation of In[1520]:= Gravitational Acceleration, g1 = (1.34117762335030*10^-26+1.34117762335030*10^-26 I)m/(s)^2
+During evaluation of In[1520]:= Gravitational Acceleration, g2 = (1.715431402876897*10^12+1.715431402876897*10^12 I)m/(s)^2
+During evaluation of In[1520]:= Gravitational Acceleration ag: (1.715431402876897*10^12+1.715431402876897*10^12 I)m/(s)^2
+During evaluation of In[1520]:= Gravitational Force m1 -> m2: (37335.1662077763+37335.1662077763 I)N
+During evaluation of In[1520]:= Gravitational Force m2 -> m1: (37335.1662077763+37335.1662077763 I)N
+During evaluation of In[1520]:= fg1 = fg2 : True, fg1 = (37335.1662077763+37335.1662077763 I)N, fg2 = (37335.1662077763+37335.1662077763 I)N
+During evaluation of In[1520]:= Gravitational Force: (37335.1662077763+37335.1662077763 I)N
+During evaluation of In[1520]:= Binding energy = (7.1998227352931*10^-14+0.*10^-28 I)eV
+During evaluation of In[1520]:= ratio1 = 1.0000000000000000+0.*10^-17 I
+During evaluation of In[1520]:= ratio2 = -9.795754479045023*10^37+9.795754479045023*10^37 I
+During evaluation of In[1520]:= curvature (\[Kappa]): 0.87513573318069165112340026994974
+During evaluation of In[1520]:= curvature (\[Kappa]): 0.61881441139072816931901849550441-0.61881441139072816931901849550600 I
+During evaluation of In[1520]:= curvature (\[Kappa]) = 1 ? False
+During evaluation of In[1520]:= G  /Go  == \[Kappa]^2 : True --> 0.*10^-16-0.76586255148971 I
+During evaluation of In[1520]:= \[Kappa] Go = (5.3928331410677*10^-11+5.3928331410677*10^-11 I)(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+During evaluation of In[1520]:= Sqrt[\[Kappa] ] Go = (3.1198515726683*10^-11+7.5319879793269*10^-11 I)(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+During evaluation of In[1520]:= q1/m1 = (1.081883316753489*10^-10+4.48130742704482*10^-11 I)C/kg
+During evaluation of In[1520]:= q2/m2 = (1.081883316753489*10^-10+4.481307427044824*10^-11 I)C/kg
+During evaluation of In[1520]:= \[CapitalXi] = (Sqrt[1-I] \[Pi]^(3/8))/(14989622900 2^(1/4))C/kg = (9.467947496230234338227816118863*10^-11-3.921752260774951270489902330685*10^-11 I)C/kg
+In[1582]:= g2
+(Abs[g2])
+Go (SunMass *1.4)/Quantity[(10^4), "Meters"]^2
+Go \[Kappa]^2
+ (SunMass *1.4)/Quantity[(10^4), "Meters"]^2
+Go +(Go \[Kappa]^2)
+Out[1582]= (1.715431402876897*10^12+1.715431402876897*10^12 I)m/(s)^2
+Out[1583]= 2.42598635526921*10^12m/(s)^2
+Out[1584]= (0. +2.42599*10^12 I)m/(s)^2
+Out[1585]= (6.6743257318364*10^-11+0.*10^-25 I)(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+Out[1586]= 2.78376*10^22kg/(m)^2
+Out[1587]= (6.6743257318364*10^-11+8.7147827228971*10^-11 I)(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+In[1588]:= Clear[m1, m2, mr1, mr2, q1, q2,qm1, qm2, af1, af2, d,g1, g2, g, fg1, fg2, d, mr, n, r1, r2,bindingEnergy, mqr1Energy, mqr2Energy, ratio1, ratio2, ratio, \[Kappa]];
+m1 =mP;
+m2 = mP;
+(*d=\[CapitalGamma]/(m1 \[Alpha]^2);*)
+(*If[m1 < m2, d=\[CapitalGamma]/(m1 \[Alpha]^2), d=\[CapitalGamma]/(m2 \[Alpha]^2)]*)
+(*d=SunEarthDistance;*)
+(*d=SunMarsDistance;*)
+d=2 lP;
+qm1=UnitConvert[\[CapitalGamma]/m1, "Meters"];
+qm2=UnitConvert[\[CapitalGamma]/m2, "Meters"];
+mr=(2 G (m1+m2))/c^2;
+mr1=(2 G m1)/c^2;
+mr2=(2G m2)/c^2;
+
+r1=mr1+qm1;
+r2=mr2+qm2;
+Print["r1 = ", r1, ", r2 = ", r2];
+r12 = r1 + r2;
+Print["r1 + r2 = ", r12];
+q1 =UnitConvert[1/Sqrt[1-I] Sqrt[ ((8\[Pi] G m1^2 \[Epsilon]o)/Sqrt[1-mr/d])], "Coulombs"];
+
+q2 =UnitConvert[1/Sqrt[1-I] Sqrt[ ((8\[Pi] G m2^2 \[Epsilon]o)/Sqrt[1-mr/d])], "Coulombs"];
+q1 m2 == q2 m1;
+
+af1=UnitConvert[Sqrt[2]/2 q1^2/(4\[Pi] \[Epsilon]o (d^3) m1 ) \[Alpha]/(2\[Pi]), ("Hertz")^2];
+af2=UnitConvert[Sqrt[2]/2 q2^2/(4\[Pi] \[Epsilon]o (d^3) m2 ) \[Alpha]/(2\[Pi]), ("Hertz")^2];
+
+g1=UnitConvert[af1 (2\[Pi] d)/\[Alpha], ("Meters")/("Seconds")^2];
+g2=UnitConvert[af2 (2\[Pi] d)/\[Alpha], ("Meters")/("Seconds")^2];
+g=UnitConvert[(af1+af2) (2\[Pi] d)/\[Alpha], ("Meters")/("Seconds")^2];
+fg1=UnitConvert[g1*m2, "Newtons"];
+fg2=UnitConvert[g2*m1, "Newtons"];
+fg1==fg2;
+(* Curvature of impedance or something, \[Kappa] *)
+\[Kappa] = ((m1+m2) \[CapitalXi] )/(q1+q2);
+(*\[Kappa] = ((m1+m2) \[CapitalXi]  )/(q1+q2);*)
+Go=G/\[Kappa]^2;
+
+(*Go=((q1+q2)/(2(m1+m2)))^2*1/(2\[Pi] \[Epsilon]o);*)
+
+G  /Go ==\[Kappa]^2;
+
+bindingEnergy = UnitConvert[e^2/(2*4\[Pi]*\[Epsilon]o*d), "Electronvolts"];
+mqr1Energy  =UnitConvert[ c^2 /(8\[Pi] \[Epsilon]o G   ) q2^2/m2, "Electronvolts"];
+mqr2Energy  =UnitConvert[ c^2 /(8\[Pi] \[Epsilon]o G   ) q1^2/m1, "Electronvolts"];
+ratio1=(mqr1Energy - m1 c^2)/mqr1Energy;
+ratio2=(mqr2Energy - m2 c^2)/mqr2Energy;
+ratio=Abs[ratio1-ratio2];
+bindingEnergy=If[m1 > m2, bindingEnergy/ratio2, bindingEnergy/ratio1];
+
+Print["G = ",SetPrecision[Go \[Kappa]^2,16]];
+Print["Go = ",Go];
+
+Print["m1 = ", m1];
+Print["m2 = ", m2];
+
+Print["q1 = ", q1];
+Print["q2 = ", q2];
+Print["Seperation: ", d];
+Print["q1 * m2 = q2 * m1 : ", q1 m2 == q2 m1, ", q1 m2 = ", q1 m2, ", q2 m1 = ", q2 m1];
+
+Print["Gravitational Acceleration, g1 = ", g1];
+Print["Gravitational Acceleration, g2 = ", g2];
+Print["Gravitational Acceleration ag: ", g];
+Print["Gravitational Force m1 -> m2: ", fg1];
+Print["Gravitational Force m2 -> m1: ", fg2];
+Print["fg1 = fg2 : ", fg1==fg2, ", fg1 = ", fg1, ", fg2 = ", fg2];
+Print["Gravitational Force: ", fg1];
+Print["Binding energy = ", bindingEnergy];
+
+Print["ratio1 = ", SetPrecision[ratio1,16]];
+Print["ratio2 = ", SetPrecision[ratio2,16]];
+
+Print["curvature (\[Kappa]): ", SetPrecision[Abs[\[Kappa]],32 ]];
+Print["curvature (\[Kappa]): ", SetPrecision[\[Kappa],32 ]];
+Print["curvature (\[Kappa]) = 1 ? ", \[Kappa]==1];
+Print["G  /Go  == \[Kappa]^2 : ",G  /Go ==\[Kappa]^2, " --> ",G  /Go ];
+Print["\[Kappa] Go = ",UnitSimplify[Go \[Kappa]]];
+Print["Sqrt[\[Kappa] ] Go = ",UnitSimplify[Go Sqrt[\[Kappa]]]];
+Print["q1/m1 = ",q1/m1];
+Print["q2/m2 = ",q2/m2];
+Print["\[CapitalXi] = ",\[CapitalXi], " = ", SetPrecision[\[CapitalXi] , 32]];
+During evaluation of In[1588]:= r1 = (Sqrt[18931629/21413747]/(14989622900000000000000000000000000 2^(3/4) \[Pi]^(1/8))+(213914163877964163 Sqrt[3/135132371234621] \[Pi]^(7/8))/(437500000000000000000000000000000000000000000000 2^(3/4)))m, r2 = (Sqrt[18931629/21413747]/(14989622900000000000000000000000000 2^(3/4) \[Pi]^(1/8))+(213914163877964163 Sqrt[3/135132371234621] \[Pi]^(7/8))/(437500000000000000000000000000000000000000000000 2^(3/4)))m
+During evaluation of In[1588]:= r1 + r2 = (Sqrt[18931629/21413747]/(7494811450000000000000000000000000 2^(3/4) \[Pi]^(1/8))+(213914163877964163 Sqrt[3/135132371234621] \[Pi]^(7/8))/(218750000000000000000000000000000000000000000000 2^(3/4)))m
+During evaluation of In[1588]:= G = 6.67432573183641*10^-11(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+During evaluation of In[1588]:= Go = \[Pi]^(3/4)/(25000000000 Sqrt[2])(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+During evaluation of In[1588]:= m1 = (7 Sqrt[405397113703863])/(2000000000000000 2^(1/4) \[Pi]^(7/8))kg
+During evaluation of In[1588]:= m2 = (7 Sqrt[405397113703863])/(2000000000000000 2^(1/4) \[Pi]^(7/8))kg
+During evaluation of In[1588]:= q1 = -((-1)^(3/4)/(200000000000000000 Sqrt[(21413747/18931629-(21413747 I)/18931629) \[Pi]]))C
+During evaluation of In[1588]:= q2 = -((-1)^(3/4)/(200000000000000000 Sqrt[(21413747/18931629-(21413747 I)/18931629) \[Pi]]))C
+During evaluation of In[1588]:= Seperation: Sqrt[18931629/21413747]/(14989622900000000000000000000000000 2^(3/4) \[Pi]^(1/8))m
+During evaluation of In[1588]:= q1 * m2 = q2 * m1 : True, q1 m2 = -((132521403 (-1)^(3/4))/(400000000000000000000000000000000 Sqrt[1-I] 2^(1/4) \[Pi]^(11/8)))kg\[ThinSpace]C, q2 m1 = -((132521403 (-1)^(3/4))/(400000000000000000000000000000000 Sqrt[1-I] 2^(1/4) \[Pi]^(11/8)))kg\[ThinSpace]C
+During evaluation of In[1588]:= Gravitational Acceleration, g1 = (673600060434349738483397800000000000000000000000000-673600060434349738483397800000000000000000000000000 I) Sqrt[21413747/18931629] 2^(1/4) \[Pi]^(1/8)m/(s)^2
+During evaluation of In[1588]:= Gravitational Acceleration, g2 = (673600060434349738483397800000000000000000000000000-673600060434349738483397800000000000000000000000000 I) Sqrt[21413747/18931629] 2^(1/4) \[Pi]^(1/8)m/(s)^2
+During evaluation of In[1588]:= Gravitational Acceleration ag: (1347200120868699476966795600000000000000000000000000-1347200120868699476966795600000000000000000000000000 I) Sqrt[21413747/18931629] 2^(1/4) \[Pi]^(1/8)m/(s)^2
+During evaluation of In[1588]:= Gravitational Force m1 -> m2: (50485054456640563932898754663448100000000000-50485054456640563932898754663448100000000000 I)/\[Pi]^(3/4)N
+During evaluation of In[1588]:= Gravitational Force m2 -> m1: (50485054456640563932898754663448100000000000-50485054456640563932898754663448100000000000 I)/\[Pi]^(3/4)N
+During evaluation of In[1588]:= fg1 = fg2 : True, fg1 = (50485054456640563932898754663448100000000000-50485054456640563932898754663448100000000000 I)/\[Pi]^(3/4)N, fg2 = (50485054456640563932898754663448100000000000-50485054456640563932898754663448100000000000 I)/\[Pi]^(3/4)N
+During evaluation of In[1588]:= Gravitational Force: (50485054456640563932898754663448100000000000-50485054456640563932898754663448100000000000 I)/\[Pi]^(3/4)N
+During evaluation of In[1588]:= Binding energy = (899355231240752534985092126739171 I Sqrt[64241241/6310543] \[Pi]^(1/8))/(125000000 2^(1/4))eV
+During evaluation of In[1588]:= ratio1 = -1.000000000000000 I
+During evaluation of In[1588]:= ratio2 = -1.000000000000000 I
+During evaluation of In[1588]:= curvature (\[Kappa]): 1.0000000000000000000000000000000
+During evaluation of In[1588]:= curvature (\[Kappa]): 1.0000000000000000000000000000000+0.*10^-32 I
+During evaluation of In[1588]:= curvature (\[Kappa]) = 1 ? ((1-I) (-1)^(1/4))/Sqrt[2]==1
+During evaluation of In[1588]:= G  /Go  == \[Kappa]^2 : True --> 1
+During evaluation of In[1588]:= \[Kappa] Go = (1/50000000000-I/50000000000) (-1)^(1/4) \[Pi]^(3/4)(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+During evaluation of In[1588]:= Sqrt[\[Kappa] ] Go = (Sqrt[(1-I) (-1)^(1/4)] \[Pi]^(3/4))/(25000000000 2^(3/4))(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+During evaluation of In[1588]:= q1/m1 = -(((-1)^(3/4) \[Pi]^(7/8))/(7494811450 2^(3/4) Sqrt[(1-I) \[Pi]]))C/kg
+During evaluation of In[1588]:= q2/m2 = -(((-1)^(3/4) \[Pi]^(7/8))/(7494811450 2^(3/4) Sqrt[(1-I) \[Pi]]))C/kg
+During evaluation of In[1588]:= \[CapitalXi] = (Sqrt[1-I] \[Pi]^(3/8))/(14989622900 2^(1/4))C/kg = (9.467947496230234338227816118863*10^-11-3.921752260774951270489902330685*10^-11 I)C/kg
+In[1650]:= g2
+(Abs[g2])
+Go \[Kappa]^2
+Go
+ (SunMass *1.4)/Quantity[(10^4), "Meters"]^2
+Go +(Go \[Kappa]^2)
+Out[1650]= (673600060434349738483397800000000000000000000000000-673600060434349738483397800000000000000000000000000 I) Sqrt[21413747/18931629] 2^(1/4) \[Pi]^(1/8)m/(s)^2
+Out[1651]= 673600060434349738483397800000000000000000000000000 Sqrt[21413747/18931629] 2^(3/4) \[Pi]^(1/8)m/(s)^2
+Out[1652]= \[Pi]^(3/4)/(25000000000 Sqrt[2])(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+Out[1653]= \[Pi]^(3/4)/(25000000000 Sqrt[2])(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+Out[1654]= 2.78376*10^22kg/(m)^2
+Out[1655]= \[Pi]^(3/4)/(12500000000 Sqrt[2])(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+In[1656]:= q1/m1
+Out[1656]= -(((-1)^(3/4) \[Pi]^(7/8))/(7494811450 2^(3/4) Sqrt[(1-I) \[Pi]]))C/kg
+In[1657]:= Clear[m1, m2, mr1, mr2, q1, q2,qm1, qm2, af1, af2, d,g1, g2, g, fg1, fg2, d, mr, n, r1, r2,bindingEnergy, mqr1Energy, mqr2Energy, ratio1, ratio2, ratio, \[Kappa]];
+m1 =SetPrecision[me,16];
+m2 = SetPrecision[mp,16];
+(*d=\[CapitalGamma]/(m1 \[Alpha]^2);*)
+(*If[m1 < m2, d=\[CapitalGamma]/(m1 \[Alpha]^2), d=\[CapitalGamma]/(m2 \[Alpha]^2)]*)
+(*d=SunEarthDistance;*)
+(*d=SunMarsDistance;*)
+If[m1 < m2, d=\[CapitalGamma]/(m1 \[Alpha]^2), d=\[CapitalGamma]/(m2 \[Alpha]^2)]
+qm1=UnitConvert[\[CapitalGamma]/m1, "Meters"];
+qm2=UnitConvert[\[CapitalGamma]/m2, "Meters"];
+mr=(2 G (m1+m2))/c^2;
+mr1=(2 G m1)/c^2;
+mr2=(2G m2)/c^2;
+
+r1=mr1+qm1;
+r2=mr2+qm2;
+Print["r1 = ", r1, ", r2 = ", r2];
+r12 = r1 + r2;
+Print["r1 + r2 = ", r12];
+q1 =UnitConvert[1/Sqrt[1-I] Sqrt[ ((8\[Pi] G m1^2 \[Epsilon]o)/Sqrt[1-mr/d])], "Coulombs"];
+
+q2 =UnitConvert[1/Sqrt[1-I] Sqrt[ ((8\[Pi] G m2^2 \[Epsilon]o)/Sqrt[1-mr/d])], "Coulombs"];
+q1 m2 == q2 m1;
+
+af1=UnitConvert[Sqrt[2]/2 q1^2/(4\[Pi] \[Epsilon]o (d^3) m1 ) \[Alpha]/(2\[Pi]), ("Hertz")^2];
+af2=UnitConvert[Sqrt[2]/2 q2^2/(4\[Pi] \[Epsilon]o (d^3) m2 ) \[Alpha]/(2\[Pi]), ("Hertz")^2];
+
+g1=UnitConvert[af1 (2\[Pi] d)/\[Alpha], ("Meters")/("Seconds")^2];
+g2=UnitConvert[af2 (2\[Pi] d)/\[Alpha], ("Meters")/("Seconds")^2];
+g=UnitConvert[(af1+af2) (2\[Pi] d)/\[Alpha], ("Meters")/("Seconds")^2];
+fg1=UnitConvert[g1*m2, "Newtons"];
+fg2=UnitConvert[g2*m1, "Newtons"];
+fg1==fg2;
+(* Curvature of impedance or something, \[Kappa] *)
+\[Kappa] = ((m1+m2) \[CapitalXi] )/(q1+q2);
+(*\[Kappa] = ((m1+m2) \[CapitalXi]  )/(q1+q2);*)
+Go=G/\[Kappa]^2;
+
+(*Go=((q1+q2)/(2(m1+m2)))^2*1/(2\[Pi] \[Epsilon]o);*)
+
+G  /Go ==\[Kappa]^2;
+
+bindingEnergy = UnitConvert[e^2/(2*4\[Pi]*\[Epsilon]o*d), "Electronvolts"];
+mqr1Energy  =UnitConvert[ c^2 /(8\[Pi] \[Epsilon]o G   ) q2^2/m2, "Electronvolts"];
+mqr2Energy  =UnitConvert[ c^2 /(8\[Pi] \[Epsilon]o G   ) q1^2/m1, "Electronvolts"];
+ratio1=(mqr1Energy - m1 c^2)/mqr1Energy;
+ratio2=(mqr2Energy - m2 c^2)/mqr2Energy;
+ratio=Abs[ratio1-ratio2];
+bindingEnergy=If[m1 > m2, bindingEnergy/ratio2, bindingEnergy/ratio1];
+
+Print["G = ",SetPrecision[Go \[Kappa]^2,16]];
+Print["Go = ",Go];
+
+Print["m1 = ", m1];
+Print["m2 = ", m2];
+
+Print["q1 = ", q1];
+Print["q2 = ", q2];
+Print["Seperation: ", d];
+Print["q1 * m2 = q2 * m1 : ", q1 m2 == q2 m1, ", q1 m2 = ", q1 m2, ", q2 m1 = ", q2 m1];
+
+Print["Gravitational Acceleration, g1 = ", g1];
+Print["Gravitational Acceleration, g2 = ", g2];
+Print["Gravitational Acceleration ag: ", g];
+Print["Gravitational Force m1 -> m2: ", fg1];
+Print["Gravitational Force m2 -> m1: ", fg2];
+Print["fg1 = fg2 : ", fg1==fg2, ", fg1 = ", fg1, ", fg2 = ", fg2];
+Print["Gravitational Force: ", fg1];
+Print["Binding energy = ", bindingEnergy];
+
+Print["ratio1 = ", SetPrecision[ratio1,16]];
+Print["ratio2 = ", SetPrecision[ratio2,16]];
+
+Print["curvature (\[Kappa]): ", SetPrecision[Abs[\[Kappa]],32 ]];
+Print["curvature (\[Kappa]): ", SetPrecision[\[Kappa],32 ]];
+Print["curvature (\[Kappa]) = 1 ? ", \[Kappa]==1];
+Print["G  /Go  == \[Kappa]^2 : ",G  /Go ==\[Kappa]^2, " --> ",G  /Go ];
+Print["\[Kappa] Go = ",UnitSimplify[Go \[Kappa]]];
+Print["Sqrt[\[Kappa] ] Go = ",UnitSimplify[Go Sqrt[\[Kappa]]]];
+Print["q1/m1 = ",q1/m1];
+Print["q2/m2 = ",q2/m2];
+Print["\[CapitalXi] = ",\[CapitalXi], " = ", SetPrecision[\[CapitalXi] , 32]];
+Out[1660]= 5.29177210473846*10^-11m
+During evaluation of In[1657]:= r1 = 2.817940320834913*10^-15m, r2 = 1.534698264270096*10^-18m
+During evaluation of In[1657]:= r1 + r2 = 2.819475019099184*10^-15m
+During evaluation of In[1657]:= G = (6.674325731836412*10^-11+0.*10^-27 I)(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+During evaluation of In[1657]:= Go = (0.*10^-25+6.6743257318364*10^-11 I)(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+During evaluation of In[1657]:= m1 = 9.10938371390000*10^-31kg
+During evaluation of In[1657]:= m2 = 1.672621925950000*10^-27kg
+During evaluation of In[1657]:= q1 = (8.62471667262200*10^-41+3.572474617425384*10^-41 I)C
+During evaluation of In[1657]:= q2 = (1.583629657593809*10^-37+6.55960881951617*10^-38 I)C
+During evaluation of In[1657]:= Seperation: 5.29177210473846*10^-11m
+During evaluation of In[1657]:= q1 * m2 = q2 * m1 : True, q1 m2 = (1.442589021173408*10^-67+5.97539937500554*10^-68 I)kg\[ThinSpace]C, q2 m1 = (1.442589021173408*10^-67+5.97539937500554*10^-68 I)kg\[ThinSpace]C
+During evaluation of In[1657]:= Gravitational Acceleration, g1 = (1.53525008883238*10^-20+1.53525008883238*10^-20 I)m/(s)^2
+During evaluation of In[1657]:= Gravitational Acceleration, g2 = (2.81895355498021*10^-17+2.81895355498021*10^-17 I)m/(s)^2
+During evaluation of In[1657]:= Gravitational Acceleration ag: (2.82048880506904*10^-17+2.82048880506904*10^-17 I)m/(s)^2
+During evaluation of In[1657]:= Gravitational Force m1 -> m2: (2.56789296039772*10^-47+2.56789296039772*10^-47 I)N
+During evaluation of In[1657]:= Gravitational Force m2 -> m1: (2.56789296039772*10^-47+2.56789296039772*10^-47 I)N
+During evaluation of In[1657]:= fg1 = fg2 : True, fg1 = (2.56789296039772*10^-47+2.56789296039772*10^-47 I)N, fg2 = (2.56789296039772*10^-47+2.56789296039772*10^-47 I)N
+During evaluation of In[1657]:= Gravitational Force: (2.56789296039772*10^-47+2.56789296039772*10^-47 I)N
+During evaluation of In[1657]:= Binding energy = (13.613103014257-0.0074179675683 I)eV
+During evaluation of In[1657]:= ratio1 = 0.9994553829785099+0.0005446170214901 I
+During evaluation of In[1657]:= ratio2 = -1835.152673421527+1836.152673421527 I
+During evaluation of In[1657]:= curvature (\[Kappa]): 1.0000000000000000000000000000044
+During evaluation of In[1657]:= curvature (\[Kappa]): 0.70710678118654752440084436210896-0.70710678118654752440084436210702 I
+During evaluation of In[1657]:= curvature (\[Kappa]) = 1 ? False
+During evaluation of In[1657]:= G  /Go  == \[Kappa]^2 : True --> 0.*10^-15-1.0000000000000 I
+During evaluation of In[1657]:= \[Kappa] Go = (4.7194609848294*10^-11+4.7194609848294*10^-11 I)(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+During evaluation of In[1657]:= Sqrt[\[Kappa] ] Go = (2.5541538797818*10^-11+6.1662729369571*10^-11 I)(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+During evaluation of In[1657]:= q1/m1 = (9.46794749623023*10^-11+3.92175226077495*10^-11 I)C/kg
+During evaluation of In[1657]:= q2/m2 = (9.46794749623023*10^-11+3.92175226077495*10^-11 I)C/kg
+During evaluation of In[1657]:= \[CapitalXi] = (Sqrt[1-I] \[Pi]^(3/8))/(14989622900 2^(1/4))C/kg = (9.467947496230234338227816118863*10^-11-3.921752260774951270489902330685*10^-11 I)C/kg
+In[1719]:= c/2
+Out[1719]= 149896229m/s
+In[1720]:= \[CapitalXi]==UnitConvert[Sqrt[(8\[Pi] G \[Epsilon]o)-I (8\[Pi] G \[Epsilon]o)]/Sqrt[2], ("Coulombs")/("Kilograms")]
+\[CapitalXi]
+c/2
+\[CapitalXi](c/2)
+Out[1720]= True
+Out[1721]= (Sqrt[1-I] \[Pi]^(3/8))/(14989622900 2^(1/4))C/kg
+Out[1722]= 149896229m/s
+Out[1723]= (Sqrt[1-I] \[Pi]^(3/8))/(100 2^(1/4))m\[ThinSpace]C/(kg\[ThinSpace]s)
+In[1724]:= (Sqrt[1-I] \[Pi]^(3/8))/(100 2^(1/4))m\[ThinSpace]C/(kg\[ThinSpace]s)
+Out[1724]= (Sqrt[1-I] \[Pi]^(3/8))/(100 2^(1/4))m\[ThinSpace]C/(kg\[ThinSpace]s)
+In[1725]:= Abs[( c \[CapitalPhi] Sqrt[4\[Pi] \[Epsilon]o G(1-I)])^2 \[Alpha]p]/(Sqrt[2]G) 
+Abs[( c \[Mu]p Sqrt[4\[Pi] \[Epsilon]p (1-I)])^2]/Sqrt[2] 
+Abs[( c Sqrt[4\[Pi] \[Epsilon]p (1-I)])^2]/Sqrt[2] 
+Abs[( c Sqrt[4\[Pi] \[Epsilon]p (1-I)])^2]/Sqrt[2] Abs[( c \[Mu]p Sqrt[4\[Pi] \[Epsilon]p (1-I)])^2]/Sqrt[2] 625000/\[Pi]^2
+S==Power[Abs[( c Sqrt[4\[Pi] \[Epsilon]p G(1-I)])^2]/(Sqrt[2]G) (Abs[( c \[Mu]p Sqrt[4\[Pi] \[Epsilon]p G(1-I)])^2]/(Sqrt[2] G)) , (8)^-1]
+Out[1725]= (4580703784999263461548761 \[Pi])/1972044687500000000000000000
+Out[1726]= (3155271500000000000000 \[Pi])/4580703784999263461548761s\[ThinSpace]J/(m\[ThinSpace]Hz\[ThinSpace](C)^2)
+Out[1727]= (4580703784999263461548761 \[Pi])/197204468750000000000m\[ThinSpace]Hz\[ThinSpace](C)^2\[NegativeMediumSpace]/(s\[ThinSpace]J)
+Out[1728]= 10000000
+Out[1729]= True
+In[1730]:= 123252792968750000000000000/197204468750000000000
+Out[1730]= 625000
