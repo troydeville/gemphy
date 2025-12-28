@@ -6,7 +6,7 @@
 
 > "The universe is a perfect geometric circuit."
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue) ![License](https://img.shields.io/badge/license-MIT%2FApache-green) ![Rust](https://img.shields.io/badge/built_with-Rust-orange)
+![Version](https://img.shields.io/badge/version-0.1.0-blue) ![License](https://img.shields.io/badge/license-MIT%2FApache-green) ![Rust](https://img.shields.io/badge/built_with-Rust-orange) [![Crates.io](https://img.shields.io/crates/v/gemphy.svg)](https://crates.io/crates/gemphy) [![Docs](https://docs.rs/gemphy/badge.svg)](https://docs.rs/gemphy) [![CI](https://github.com/troydeville/gemphy/workflows/CI/badge.svg)](https://github.com/troydeville/gemphy/actions)
 
 ---
 
@@ -44,7 +44,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-gemometry = "0.1.0"
+gemphy = "0.1.0"
 ```
 
 > **Note:** The library re-exports `Complex64` from `num-complex`, so you do not need to install it separately unless otherwise needed.
@@ -58,7 +58,7 @@ gemometry = "0.1.0"
 The `GeometricEncodedMedium` struct initializes the fundamental constants derived from the GEM geometric axioms.
 
 ```rust
-use gemometry::GeometricEncodedMedium;
+use gemphy::GeometricEncodedMedium;
 
 fn main() {
     let medium = GeometricEncodedMedium::new();
@@ -75,7 +75,7 @@ fn main() {
 The `GeometricKnot` represents any entity in the universe. It automatically detects its scale (Quantum vs. Macro) and sizes its geometric "vacuum knot" accordingly.
 
 ```rust
-use gemometry::GeometricKnot;
+use gemphy::GeometricKnot;
 
 fn main() {
     // 1. Create an Electron (Quantum Scale)
@@ -388,7 +388,7 @@ Abs[binding_energy_ev] = 13.60569110881573
 At the quantum scale, the medium handles interactions via the Coulomb protocol (Electric Charge) and the Gravity protocol (Mass/Shadow Charge) simultaneously.
 
 ```rust
-use gemometry::{GeometricEncodedMedium, GeometricKnot, ForceProtocol};
+use gemphy::{GeometricEncodedMedium, GeometricKnot, ForceProtocol};
 
 fn main() {
     let medium = GeometricEncodedMedium::new();
@@ -413,7 +413,7 @@ fn main() {
 At the cosmic scale, the Gravity protocol dominates.
 
 ```rust
-use gemometry::{GeometricEncodedMedium, GeometricKnot, ForceProtocol};
+use gemphy::{GeometricEncodedMedium, GeometricKnot, ForceProtocol};
 
 fn main() {
     let medium = GeometricEncodedMedium::new();
@@ -438,7 +438,7 @@ What happens inside a Black Hole or at the Planck Scale? Standard physics breaks
 <!-- end list -->
 
 ```rust
-use gemometry::{GeometricEncodedMedium, GeometricKnot};
+use gemphy::{GeometricEncodedMedium, GeometricKnot};
 
 fn main() {
     let medium = GeometricEncodedMedium::new();
@@ -480,6 +480,13 @@ cargo test
   - **Grand Unification:** Verifies the geometric scaling from Electrons to the Universe.
   - **Force Parity:** Checks that GEM-derived Gravity matches Newtonian Gravity to $10^{-13}$ precision.
   - **Phase Change:** Ensures forces transition to complex numbers correctly inside event horizons.
+
+---
+
+## Contributing
+
+- See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+- Issues/PRs welcome!
 
 ---
 
