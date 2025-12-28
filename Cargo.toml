@@ -1,6 +1,6 @@
 [package]
 name = "gemphy"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 authors = ["Troy Deville <tsndeville@gmail.com>"]
 description = "GEM Physics: Derives physical constants from geometric impedance in a horn torus vacuum."
