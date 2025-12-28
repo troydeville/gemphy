@@ -16,7 +16,7 @@ fn main() -> std::io::Result<()> {
     
     let d: f64 = 1e4;
 
-    let result = medium.calculate_interaction(m1, m2, d);
+    let result = medium.calculate_interaction(m1, m2, d.into());
 
     println!("{:#?}", test_mass);
     println!("{:#?}", neutron_star);

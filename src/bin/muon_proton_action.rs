@@ -24,13 +24,12 @@ fn main() -> std::io::Result<()> {
     let rg2 = (medium.gamma_p / (proton.mass * medium.alpha)).powi(2);
     let d = (rg1+rg2).sqrt();
 
-    let result = medium.calculate_interaction(m1, m2, d);
+    let result = medium.calculate_interaction(m1, m2, d.into());
 
     println!("electron: {:#?}", muon);
     println!("proton: {:#?}", proton);
-
     println!("Result: {:#?}", result);
-    
-    println!("Abs[binding_energy_ev] = {:#?}", (result.binding_energy_ev).abs());
+    let r1 = result.ratio1.abs();
+    println!("Abs[binding_energy_ev] = {:#?}",  r1*(result.binding_energy_ev).abs());
     Ok(())
 }
