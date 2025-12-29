@@ -1,7 +1,4 @@
-use std::f64::consts::{PI, SQRT_2};
 use num_complex::Complex64;
-
-use crate::medium::{ALPHA, C, Z_P};
 
 /// A point in 4-Dimensional Complex Space (x, y, z, w).
 /// 'w' is the spatial dimension required for the Horn Torus closure.
@@ -29,102 +26,102 @@ impl Spatial4D {
     }
 }
 
-/// The Horn Torus Geometry ($R = r = S$).
-/// Source: <https://mathworld.wolfram.com/HornTorus.html>
-#[derive(Debug, Clone)]
-struct HornTorus {
-    /// The fundamental radius S (Major and Minor radius are equal).
-    pub r: f64,
-}
+// /// The Horn Torus Geometry ($R = r = S$).
+// /// Source: <https://mathworld.wolfram.com/HornTorus.html>
+// #[derive(Debug, Clone)]
+// struct HornTorus {
+//     /// The fundamental radius S (Major and Minor radius are equal).
+//     pub r: f64,
+// }
 
-impl Default for HornTorus {
-    fn default() -> Self {
-        let s = SQRT_2 * PI.powf(0.25);
-        Self { r: s }
-    }
-}
+// impl Default for HornTorus {
+//     fn default() -> Self {
+//         let s = SQRT_2 * PI.powf(0.25);
+//         Self { r: s }
+//     }
+// }
 
-impl HornTorus {
-    pub fn new(r: f64) -> Self {
-        Self { r }
-    }
+// impl HornTorus {
+//     pub fn new(r: f64) -> Self {
+//         Self { r }
+//     }
 
-    /// Exact Volume: $2 \pi^2 S^3$
-    pub fn volume(&self) -> f64 {
-        2.0 * PI.powi(2) * self.r.powi(3)
-    }
+//     /// Exact Volume: $2 \pi^2 S^3$
+//     pub fn volume(&self) -> f64 {
+//         2.0 * PI.powi(2) * self.r.powi(3)
+//     }
 
-    /// Exact Surface Area: $4 \pi^2 S^2$
-    /// (Note: Wolfram MathWorld definition for Horn Torus is 4*pi^2*R*r. Since R=r, it is 4*pi^2*r^2).
-    pub fn surface_area(&self) -> f64 {
-        4.0 * PI.powi(2) * self.r.powi(2)
-    }
+//     /// Exact Surface Area: $4 \pi^2 S^2$
+//     /// (Note: Wolfram MathWorld definition for Horn Torus is 4*pi^2*R*r. Since R=r, it is 4*pi^2*r^2).
+//     pub fn surface_area(&self) -> f64 {
+//         4.0 * PI.powi(2) * self.r.powi(2)
+//     }
 
-    /// The "Volume Mismatch" driving Action flow.
-    pub fn volume_mismatch(&self) -> f64 {
-        self.volume() * ALPHA
-    }
+//     /// The "Volume Mismatch" driving Action flow.
+//     pub fn volume_mismatch(&self) -> f64 {
+//         self.volume() * ALPHA
+//     }
 
-    /// Implicit Equation evaluation.
-    /// Formula: $(x^2 + y^2 + z^2)^2 = 4S^2(x^2 + y^2)$
-    /// Returns the residual (should be 0 on surface).
-    pub fn implicit_residual(&self, x: f64, y: f64, z: f64) -> f64 {
-        let lhs = (x*x + y*y + z*z).powi(2);
-        let rhs = 4.0 * self.r.powi(2) * (x*x + y*y);
-        lhs - rhs
-    }
+//     /// Implicit Equation evaluation.
+//     /// Formula: $(x^2 + y^2 + z^2)^2 = 4S^2(x^2 + y^2)$
+//     /// Returns the residual (should be 0 on surface).
+//     pub fn implicit_residual(&self, x: f64, y: f64, z: f64) -> f64 {
+//         let lhs = (x*x + y*y + z*z).powi(2);
+//         let rhs = 4.0 * self.r.powi(2) * (x*x + y*y);
+//         lhs - rhs
+//     }
 
-    /// Parametric Equations ($u, v \in [0, 2\pi)$).
-    /// Wolfram: $x = (S + S \cos u) \cos v$
-    pub fn parametric(&self, u: f64, v: f64) -> (f64, f64, f64) {
-        let h = self.r * (1.0 + u.cos());
-        (
-            h * v.cos(),
-            h * v.sin(),
-            self.r * u.sin()
-        )
-    }
+//     /// Parametric Equations ($u, v \in [0, 2\pi)$).
+//     /// Wolfram: $x = (S + S \cos u) \cos v$
+//     pub fn parametric(&self, u: f64, v: f64) -> (f64, f64, f64) {
+//         let h = self.r * (1.0 + u.cos());
+//         (
+//             h * v.cos(),
+//             h * v.sin(),
+//             self.r * u.sin()
+//         )
+//     }
     
-    /// Gaussian Curvature $K$.
-    /// Formula: $K = \frac{\cos u}{r(R + r \cos u)}$ -> $K = \frac{\cos u}{S^2(1+\cos u)}$
-    pub fn gaussian_curvature(&self, u: f64) -> f64 {
-        let denom = self.r.powi(2) * (1.0 + u.cos());
-        if denom.abs() < 1e-15 { return f64::INFINITY; }
-        u.cos() / denom
-    }
-}
+//     /// Gaussian Curvature $K$.
+//     /// Formula: $K = \frac{\cos u}{r(R + r \cos u)}$ -> $K = \frac{\cos u}{S^2(1+\cos u)}$
+//     pub fn gaussian_curvature(&self, u: f64) -> f64 {
+//         let denom = self.r.powi(2) * (1.0 + u.cos());
+//         if denom.abs() < 1e-15 { return f64::INFINITY; }
+//         u.cos() / denom
+//     }
+// }
 
-trait GemSurface {
-    fn radius_a(&self) -> f64;
-    fn volume(&self) -> f64;
-    fn surface_area(&self) -> f64;
-    fn parametric_surface(&self, u: f64, v: f64) -> [f64; 3];
-    fn implicit_equation(&self, x: f64, y: f64, z: f64) -> f64;
-    fn metric_tensor(&self, v: f64) -> (f64, f64) {
-        let a = self.radius_a();
-        let cos_half_v = (v / 2.0).cos();
-        let g_uu = 4.0 * a.powi(2) * cos_half_v.powi(4);
-        let g_vv = a.powi(2);
-        (g_uu, g_vv)
-    }
-    fn gaussian_curvature(&self, v: f64) -> f64 {
-        let a = self.radius_a();
-        let denom = a.powi(2) * (1.0 + v.cos());
-        if denom.abs() < 1e-9 { return 0.0; }
-        v.cos() / denom
-    }
-}
+// trait GemSurface {
+//     fn radius_a(&self) -> f64;
+//     fn volume(&self) -> f64;
+//     fn surface_area(&self) -> f64;
+//     fn parametric_surface(&self, u: f64, v: f64) -> [f64; 3];
+//     fn implicit_equation(&self, x: f64, y: f64, z: f64) -> f64;
+//     fn metric_tensor(&self, v: f64) -> (f64, f64) {
+//         let a = self.radius_a();
+//         let cos_half_v = (v / 2.0).cos();
+//         let g_uu = 4.0 * a.powi(2) * cos_half_v.powi(4);
+//         let g_vv = a.powi(2);
+//         (g_uu, g_vv)
+//     }
+//     fn gaussian_curvature(&self, v: f64) -> f64 {
+//         let a = self.radius_a();
+//         let denom = a.powi(2) * (1.0 + v.cos());
+//         if denom.abs() < 1e-9 { return 0.0; }
+//         v.cos() / denom
+//     }
+// }
 
-impl GemSurface for HornTorus {
-    fn radius_a(&self) -> f64 { self.r }
-    fn volume(&self) -> f64 { 2.0 * PI.powi(2) * self.r.powi(3) }
-    fn surface_area(&self) -> f64 { 4.0 * PI.powi(2) * self.r.powi(2) }
-    fn parametric_surface(&self, u: f64, v: f64) -> [f64; 3] {
-        let tube_factor = 1.0 + v.cos();
-        [self.r * u.cos() * tube_factor, self.r * tube_factor * u.sin(), self.r * v.sin()]
-    }
-    fn implicit_equation(&self, x: f64, y: f64, z: f64) -> f64 {
-        let sum_sq = x*x + y*y + z*z;
-        sum_sq.powi(2) - (4.0 * self.r.powi(2) * (x*x + y*y))
-    }
-}
+// impl GemSurface for HornTorus {
+//     fn radius_a(&self) -> f64 { self.r }
+//     fn volume(&self) -> f64 { 2.0 * PI.powi(2) * self.r.powi(3) }
+//     fn surface_area(&self) -> f64 { 4.0 * PI.powi(2) * self.r.powi(2) }
+//     fn parametric_surface(&self, u: f64, v: f64) -> [f64; 3] {
+//         let tube_factor = 1.0 + v.cos();
+//         [self.r * u.cos() * tube_factor, self.r * tube_factor * u.sin(), self.r * v.sin()]
+//     }
+//     fn implicit_equation(&self, x: f64, y: f64, z: f64) -> f64 {
+//         let sum_sq = x*x + y*y + z*z;
+//         sum_sq.powi(2) - (4.0 * self.r.powi(2) * (x*x + y*y))
+//     }
+// }
