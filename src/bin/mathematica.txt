@@ -1,0 +1,120 @@
+In[1733]:= Clear[m1, m2,d, q1, q2,EnergyEV, \[Epsilon], g, v, distance,af1, af2, ag];
+m1=ElectronMass;
+m2=ProtonMass;
+distance =(\[CapitalGamma]/(m1 \[Alpha]^2)+\[CapitalGamma]/(m2 \[Alpha]^2))-((2G m1)/c^2+(2G m2)/c^2);
+
+q1=\[CapitalXi] m1;
+q2=\[CapitalXi] m2;
+
+\[Kappa] = ((m1+m2) \[CapitalXi] )/(q1+q2);
+Go=G/\[Kappa]^2;
+
+f1Sq=UnitSimplify[(q1^2 \[Alpha])/(8 Sqrt[2] distance^3 m1 \[Pi]^2 \[Epsilon]o)];
+f2Sq=UnitSimplify[(q2^2 \[Alpha])/(8 Sqrt[2] distance^3 m2 \[Pi]^2 \[Epsilon]o)];
+
+f1=UnitConvert[Sqrt[f1Sq], "Hertz"];
+f2=UnitConvert[Sqrt[f2Sq], "Hertz"];
+
+
+
+ag1 = UnitConvert[(f1Sq) (2\[Pi] distance )/\[Alpha], ("Meters")/("Seconds")^2];
+ag2 = UnitConvert[(f2Sq) (2\[Pi] distance)/\[Alpha], ("Meters")/("Seconds")^2];
+ag = UnitConvert[(f1Sq+f2Sq) (2\[Pi] distance)/\[Alpha], ("Meters")/("Seconds")^2];
+
+
+Er1=UnitConvert[(e^2 Go m1 m2 \[Alpha]^2)/(Sqrt[2] (m1+m2) \[CapitalGamma] \[CapitalXi]^2), "Electronvolts"];
+Er2=UnitConvert[(e^2 Go m1^2 m2 \[Alpha]^2)/(Sqrt[2] (m1+m2) q2 \[CapitalGamma] \[CapitalXi]), "Electronvolts"];
+
+Ei1=UnitConvert[(e^2 Go m1 q1 \[Alpha]^2)/(Sqrt[2] (m1+m2) \[CapitalGamma] \[CapitalXi]^3), "Electronvolts"];
+Ei2=UnitConvert[(e^2 Go m1 m2 \[Alpha]^2)/(Sqrt[2] (m1+m2) \[CapitalGamma] \[CapitalXi]^2), "Electronvolts"];
+
+Abs[Er1]
+Abs[Er2]
+
+Abs[Ei1]
+Abs[Ei2]
+
+Abs[Er1+Er2]
+Abs[Ei1+Ei2]
+
+SetPrecision[Abs[\[Kappa]],12]
+Abs[Go]
+
+Abs[f1]
+Abs[f2]
+
+Abs[ag1]
+Abs[ag2]
+Out[1752]= 13.5983eV
+Out[1753]= 0.00740586eV
+Out[1754]= 0.00740586eV
+Out[1755]= 13.5983eV
+Out[1756]= 13.6057eV
+Out[1757]= 13.6057eV
+Out[1758]= 1.00000000000
+Out[1759]= 6.67433*10^-11(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+Out[1760]= 6.89739*10^-7Hz
+Out[1761]= 0.0000295555Hz
+Out[1762]= 2.16881*10^-20m/(s)^2
+Out[1763]= 3.98226*10^-17m/(s)^2
+In[1701]:= Clear[m1, m2,d, q1, q2,EnergyEV, \[Epsilon], g, v, distance,af1, af2, ag];
+m1=EarthMass;
+m2=SunMass;
+((\[CapitalGamma]/(m1 \[Alpha]^2)+\[CapitalGamma]/(m2 \[Alpha]^2))-((2G m1)/c^2+(2G m2)/c^2))
+distance =((\[CapitalGamma]/(m1 \[Alpha]^2)+\[CapitalGamma]/(m2 \[Alpha]^2))-((2G m1)/c^2+(2G m2)/c^2))+SunEarthDistance;
+
+q1=\[CapitalXi] m1;
+q2=\[CapitalXi] m2;
+
+\[Kappa] = ((m1+m2) \[CapitalXi] )/(q1+q2);
+Go=G/\[Kappa]^2;
+
+f1Sq=UnitSimplify[(q1^2 \[Alpha])/(8 Sqrt[2] distance^3 m1 \[Pi]^2 \[Epsilon]o)];
+f2Sq=UnitSimplify[(q2^2 \[Alpha])/(8 Sqrt[2] distance^3 m2 \[Pi]^2 \[Epsilon]o)];
+
+f1=UnitConvert[Sqrt[f1Sq], "Hertz"];
+f2=UnitConvert[Sqrt[f2Sq], "Hertz"];
+
+
+
+ag1 = UnitConvert[(f1Sq) (2\[Pi] distance )/\[Alpha], ("Meters")/("Seconds")^2];
+ag2 = UnitConvert[(f2Sq) (2\[Pi] distance)/\[Alpha], ("Meters")/("Seconds")^2];
+ag = UnitConvert[(f1Sq+f2Sq) (2\[Pi] distance)/\[Alpha], ("Meters")/("Seconds")^2];
+
+
+Er1=UnitConvert[(e^2 Go m1 m2 \[Alpha]^2)/(Sqrt[2] (m1+m2) \[CapitalGamma] \[CapitalXi]^2), "Electronvolts"];
+Er2=UnitConvert[(e^2 Go m1^2 m2 \[Alpha]^2)/(Sqrt[2] (m1+m2) q2 \[CapitalGamma] \[CapitalXi]), "Electronvolts"];
+
+Ei1=UnitConvert[(e^2 Go m1 q1 \[Alpha]^2)/(Sqrt[2] (m1+m2) \[CapitalGamma] \[CapitalXi]^3), "Electronvolts"];
+Ei2=UnitConvert[(e^2 Go m1 m2 \[Alpha]^2)/(Sqrt[2] (m1+m2) \[CapitalGamma] \[CapitalXi]^2), "Electronvolts"];
+
+Abs[Er1]
+Abs[Er2]
+
+Abs[Ei1]
+Abs[Ei2]
+
+Abs[Er1+Er2]
+Abs[Ei1+Ei2]
+
+SetPrecision[Abs[\[Kappa]],12]
+Abs[Go]
+
+Abs[f1]
+Abs[f2]
+
+Abs[ag1]
+Abs[ag2]
+Out[1704]= -2953.26m
+Out[1721]= 8.91998*10^55eV
+Out[1722]= 2.67913*10^50eV
+Out[1723]= 2.67913*10^50eV
+Out[1724]= 8.91998*10^55eV
+Out[1725]= 8.92001*10^55eV
+Out[1726]= 8.92001*10^55eV
+Out[1727]= 1.00000000000
+Out[1728]= 6.67433*10^-11(m)^3\[NegativeMediumSpace]/(kg\[ThinSpace](s)^2)
+Out[1729]= 1.20722*10^-11Hz
+Out[1730]= 6.96582*10^-9Hz
+Out[1731]= 1.84462*10^-8m/(s)^2
+Out[1732]= 0.00614153m/(s)^2

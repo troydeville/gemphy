@@ -1,4 +1,6 @@
-use gemphy::{GeometricKnot, GeometricEncodedMedium};
+
+use gemphy::{knot::GeometricKnot, medium::{GeometricEncodedMedium}};
+use num_complex::ComplexFloat;
 
 fn main() -> std::io::Result<()> {
 
@@ -23,6 +25,7 @@ fn main() -> std::io::Result<()> {
 
     println!("Result: {:#?}", result);
     
-
+println!("Result: {:12e}", result.g1);
+println!("Result: {:12e}", result.g2);
     Ok(())
 }

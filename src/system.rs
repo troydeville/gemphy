@@ -1,5 +1,6 @@
 use num_complex::{Complex64};
-use crate::{GeometricEncodedMedium, ImpedanceField, Spatial4D};
+
+use crate::{geometry::Spatial4D, knot::ImpedanceField, medium::GeometricEncodedMedium};
 
 /// The GEM System Solver.
 /// Accumulates Action instead of stepping Time.

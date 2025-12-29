@@ -1,5 +1,6 @@
-use gemphy::{GeometricEncodedMedium, GeometricKnot, medium::ELEM_CHARGE};
-use num_complex::ComplexFloat;
+
+use gemphy::{knot::GeometricKnot, medium::{ELEM_CHARGE, GeometricEncodedMedium}};
+use num_complex::{ComplexFloat};
 
 fn main() -> std::io::Result<()> {
     let medium = GeometricEncodedMedium::new();

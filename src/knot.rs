@@ -1,5 +1,8 @@
 use num_complex::Complex64;
-use crate::{GeometricEncodedMedium, Spatial4D};
+
+use crate::{geometry::Spatial4D, medium::GeometricEncodedMedium};
+// use crate::{GeometricEncodedMedium, Spatial4D};
+
 
 #[derive(Debug, Clone)]
 pub struct GeometricKnot {

@@ -1,5 +1,5 @@
-use gemphy::{Complex64, GeometricEncodedMedium, GeometricKnot, medium::ELEM_CHARGE};
-use num_complex::ComplexFloat;
+use gemphy::{knot::GeometricKnot, medium::{ELEM_CHARGE, GeometricEncodedMedium}};
+use num_complex::{Complex64, ComplexFloat};
 
 fn main() -> std::io::Result<()> {
 
@@ -35,7 +35,7 @@ fn main() -> std::io::Result<()> {
     println!(" ((result.q2 / m1).abs()/(result.q1 / m2).abs()).sqrt(): {:#?}", ((result.q2 / m2)/(result.q1 / m2)).abs());
     // println!(" ((result.q2 / m1).abs()/(result.q1 / m2).abs()).sqrt(): {:#?}", ((result.q2 / m1).abs()/(result.q1 / m2).abs()).sqrt());
     // println!(" ((result.q2 / m1).abs()/(result.q1 / m2).abs()).sqrt(): {:#?}", (m2/m1).powi(2));
-    println!("Abs[binding_energy_ev] = {:#?}", result.binding_energy_ev.abs() / ELEM_CHARGE
+    println!("Abs[binding_energy_ev] = {:#?}", result.er1.norm() / ELEM_CHARGE
 
 );
     Ok(())

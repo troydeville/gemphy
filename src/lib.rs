@@ -13,11 +13,11 @@ pub mod knot;
 pub mod system;
 pub mod geometry;
 
-pub use geometry::*;
-pub use num_complex::Complex64;
-pub use medium::{GeometricEncodedMedium, ForceProtocol};
-pub use knot::{GeometricKnot, ImpedanceField};
-pub use system::{GemSystem};
+// pub use geometry::*;
+// pub use num_complex::Complex64;
+// pub use medium::{GeometricEncodedMedium, ForceProtocol};
+// pub use knot::{GeometricKnot, ImpedanceField};
+// pub use system::{GemSystem};
 
 
 // ==============================================================================
@@ -28,7 +28,9 @@ pub use system::{GemSystem};
 mod tests {
     use std::f64::consts::PI;
 
-    use crate::medium::ELEM_CHARGE;
+    use num_complex::Complex64;
+
+    use crate::{knot::GeometricKnot, medium::{ELEM_CHARGE, GeometricEncodedMedium}};
 
     use super::*;
 
