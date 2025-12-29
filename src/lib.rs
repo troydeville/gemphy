@@ -28,6 +28,8 @@ pub use system::{GemSystem};
 mod tests {
     use std::f64::consts::PI;
 
+    use crate::medium::ELEM_CHARGE;
+
     use super::*;
 
     #[test]
@@ -68,10 +70,10 @@ mod tests {
 
         println!("**");
         println!("{:-<20} Energy Allocation {:-<20} ", "", "");
-        println!("m1 allocation at d:     {:.5} eV (Target: 13.5983)", result.er1.norm());
-        println!("m2 allocation at d:     {:.5} eV (Target: 0.0074)", result.er2.norm());
+        println!("m1 allocation at d:     {:.5e} eV (Target: 13.5983)", result.er1.norm()/ELEM_CHARGE);
+        println!("m2 allocation at d:     {:.5e} eV (Target: 0.0074)", result.er2.norm()/ELEM_CHARGE);
         println!("{:-<60}", "");
-        println!("Total energy allocated: {:.5} eV (Target: 13.6057)", (result.er1 + result.er2).norm());
+        println!("Total energy allocated: {:.5e} eV (Target: 13.6057)", (result.er1 + result.er2).norm()/ELEM_CHARGE);
         println!("{:-<60}", "");
         println!("{:-<60}", "");
         
