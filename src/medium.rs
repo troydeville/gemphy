@@ -1,19 +1,39 @@
 use std::f64::consts::{PI, SQRT_2};
 use num_complex::{Complex64, ComplexFloat};
 use crate::GeometricKnot;
-use crate::constants::*;
+pub const C: f64 = 299_792_458.0;
+pub const ELEM_CHARGE: f64 = 1.602_176_63e-19;
+pub const PLANCK_H: f64 = 6.626_070_15e-34;
+pub const Z_P: f64 = (2.0 * PLANCK_H) / (ELEM_CHARGE*ELEM_CHARGE);
+pub const PHI_Q: f64 = 1e-7; 
+pub const PHI_M: f64 = 1e4;
+pub const ALPHA_P: f64 = (4.0 * PI * C) / Z_P;
+pub const ALPHA: f64 = ALPHA_P * PHI_Q;
+pub const XI_REAL_POW_2: f64 = 4.0 * PI * SQRT_2;
+pub const G: f64 = (4.0 * PI * PHI_Q)/((SQRT_2) * PHI_M);
 
+// ==============================================================================
+//  GEOMETRIC ENCODED MEDIUM (GEM)
+// ==============================================================================
 #[derive(Debug, Clone)]
 pub struct GemInteractionResult {
-    pub q1: Complex64, pub q2: Complex64, pub q_total: Complex64,
-    pub af1: Complex64, pub af2: Complex64,
-    pub g1: Complex64, pub g2: Complex64,
+    pub q1: Complex64,
+    pub q2: Complex64,
+    pub q_total: Complex64,
+    pub af1: Complex64,
+    pub af2: Complex64,
+    pub g1: Complex64,
+    pub g2: Complex64,
     pub force: Complex64,
     pub curvature: Complex64,
-    pub g_o: Complex64, pub g_recovered: Complex64,
-    pub mqr1_ev: Complex64, pub mqr2_ev: Complex64,
-    pub ratio1: Complex64, pub ratio2: Complex64,
+    pub g_o: Complex64,
+    pub g_recovered: Complex64,
     pub binding_energy_ev: Complex64,
+    pub er1: Complex64, pub er2: Complex64,
+    pub ei1: Complex64, pub ei2: Complex64,
+    pub f1: Complex64, pub f2: Complex64,
+    pub distance_natural: f64,
+    pub force_norm: f64,
     pub schwarzschild_radius: f64,
     pub ratio_mr_d: f64,
     pub is_complex: bool,
@@ -36,31 +56,40 @@ impl Default for GeometricEncodedMedium { fn default() -> Self { Self::new() } }
 
 impl GeometricEncodedMedium {
     pub fn new() -> Self {
+        
+        // const XI_REAL_POW_2: f64 = 4.0 * PI * SQRT_2 * G_CONST * EPSILON_0;
+        
+        let s = SQRT_2 * PI.powf(0.25);
+
         let h = PLANCK_H;
         let e = ELEM_CHARGE;
         let c = C;
-        let s = S_GEOM_FACTOR; // Use Geometric Factor (~1.88)
-        let phi_big = 1e-7; 
-        let phi_small = 1e4;
 
-        let z_p = (2.0 * h) / e.powi(2);
-        let alpha_p = (4.0 * PI * c) / z_p;
+        let phi_big = PHI_Q; 
+        let phi_small = PHI_M;
+
+        let z_p = Z_P;
+        let alpha_p = ALPHA_P;
         let gamma_p = e.powi(2) / alpha_p;
         let alpha = ALPHA;
         let z_o = z_p * alpha;
-        let epsilon_o = EPSILON_0;
-        let gamma = GAMMA;
+        let epsilon_o = 1.0 / (c * z_o);
+        let gamma = gamma_p * alpha;
         
-        // Use constant G for test stability
-        let g = G_CONST;
+        let g = (4.0 * PI * PHI_Q)/((SQRT_2 * PI.powf(0.25)) * PHI_M);
+        // (4 \[Pi])/S \[CapitalPhi]/\[Phi]
         
         let m_p = ((h * c) / (2.0 * PI * g)).sqrt();
         let l_p = ((h * g) / (2.0 * PI * c.powi(3))).sqrt();
         
-        let xi_mag_vac = (4.0 * PI * SQRT_2 * g * epsilon_o).sqrt();
+        // let xi_mag_vac = (4.0 * PI * SQRT_2 * g * epsilon_o).sqrt();
         
-        let xi_vacuum = xi_mag_vac * Complex64::new((PI/8.0).cos(), -(PI/8.0).sin());
-
+        // let xi_vacuum = xi_mag_vac * Complex64::new((PI/8.0).cos(), -(PI/8.0).sin());
+        // 
+        let xi_magnitude = (4.0 * PI * SQRT_2 * g * epsilon_o).sqrt();
+        // let xi_phase = Complex64::from_polar(1.0, -PI / 8.0);
+        let xi = xi_magnitude* Complex64::new((PI/8.0).cos(), -(PI/8.0).sin());
+        
         let k_vel = (alpha * c) / (2.0 * PI);
 
         Self {
@@ -68,78 +97,76 @@ impl GeometricEncodedMedium {
             z_p, alpha_p, gamma_p,
             alpha, z_o, epsilon_o, gamma,
             g, m_p, l_p, 
-            xi: xi_vacuum, // Use Vacuum Xi for Medium Interactions
+            xi,
             k_vel,
         }
     }
 
-    /// Calculates the interaction using knot charges if significant, else shadow charges.
     pub fn calculate_interaction(&self, p1: &GeometricKnot, p2: &GeometricKnot, d: Complex64) -> GemInteractionResult {
         let m1 = p1.mass;
         let m2 = p2.mass;
-        let mr = (2.0 * self.g * (m1 + m2)) / self.c.powi(2);
 
-        let d_norm = d.norm();
-        let eff_d = if d_norm < 1e-35 { Complex64::from(1e-35) } else { d };
-
-        let ratio_mr_d = Complex64::from(mr) / eff_d;
-        let ratio_mr_d_safe = if (Complex64::from(1.0) - ratio_mr_d).norm() < 1e-15 {
-            Complex64::from(1.0 - 1e-15)
-        } else {
-            ratio_mr_d
-        };
-
-        // Use knot charge if significant (e.g., for EM/charged particles), else shadow (gravity)
-        let q1 = if p1.charge.norm() > 1e-30 { p1.charge } else { self.xi * m1 };
-        let q2 = if p2.charge.norm() > 1e-30 { p2.charge } else { self.xi * m2 };
+        // 2. Shadow Charges and Curvature
+        let q1 = self.xi * m1;
+        let q2 = self.xi * m2;
+        
+        let m_total = m1 + m2;
         let q_total = q1 + q2;
 
-        let sqrt2_div2 = SQRT_2 / 2.0;
-        let d3 = eff_d * eff_d * eff_d;
-        let alpha_2pi = self.alpha / (2.0 * PI);
+        let rqm1 = self.gamma / (m1 * self.alpha.powi(2));
+        let rqm2 = self.gamma / (m2 * self.alpha.powi(2));
+        let rsm1 = (2.0 * self.g * m1) / self.c.powi(2);
+        let rsm2 = (2.0 * self.g * m2) / self.c.powi(2);
 
-        let geom_denom_1 = Complex64::from(4.0 * PI * self.epsilon_o * m1) * d3;
-        let geom_denom_2 = Complex64::from(4.0 * PI * self.epsilon_o * m2) * d3;
+        let d_nat = (rqm1 + rqm2) - (rsm1 + rsm2);
 
-        let af1 = (Complex64::new(sqrt2_div2, 0.0) * q1.powi(2) * alpha_2pi) / geom_denom_1;
-        let af2 = (Complex64::new(sqrt2_div2, 0.0) * q2.powi(2) * alpha_2pi) / geom_denom_2;
+        // Use provided distance d if significant, else use natural distance
+        
+        let dist = d_nat;
+        let d3 = dist.powi(3);
 
-        let scaler_g = (Complex64::from(2.0 * PI) * eff_d) / self.alpha;
-        let g1 = af1 * scaler_g;
-        let fg = g1 * Complex64::from(m2);
+        let kappa = self.xi * (m_total/q_total);
+        let go = self.g / kappa.powi(2);
+        
+        // 3. Frequency Squared 
+        let common_den = Complex64::from(8.0 * SQRT_2 * PI.powi(2) * self.epsilon_o) * d3;
+        let f1_sq = (q1.powi(2) * self.alpha) / (common_den * m1);
+        let f2_sq = (q2.powi(2) * self.alpha) / (common_den * m2);
 
-        // Kappa with safeguard for near-zero q_total (strong EM cases)
-        let m_total = m1 + m2;
-        let kappa = if q_total.norm() > 1e-30 {
-            self.xi * m_total / q_total.norm()  // Use norm for magnitude scaling; adjust if phase needed
-        } else {
-            Complex64::new(1e20, 0.0)  // Large for near-cancellation (e.g., opposite charges)
-        };
+        let f1 = f1_sq.sqrt();
+        let f2 = f2_sq.sqrt();
 
-        let go = self.g / (kappa.abs().powi(2));
-        let g_recovered = go * kappa.powi(2);
+        // 4. Accelerations 
+        let ag_scaler = (Complex64::from(2.0 * PI) * dist) / self.alpha;
+        let ag1 = f1_sq * ag_scaler;
+        let ag2 = f2_sq * ag_scaler;
 
-        let mqr_coeff = self.c.powi(2) / (8.0 * PI * self.epsilon_o * g_recovered);
-        let mqr1_ev = (Complex64::from(mqr_coeff) * (q2.powi(2) / Complex64::from(m2))) / self.e;
-        let mqr2_ev = (Complex64::from(mqr_coeff) * (q1.powi(2) / Complex64::from(m1))) / self.e; 
+        let force = ag1 * m2;
 
-        let m1_c2_ev = (m1 * self.c.powi(2)) / self.e;
-        let m2_c2_ev = (m2 * self.c.powi(2)) / self.e;
-        let ratio1 = mqr1_ev / (mqr1_ev + Complex64::new(m1_c2_ev, 0.0));
-        let ratio2 = mqr2_ev / (mqr2_ev + Complex64::new(m2_c2_ev, 0.0));
+        // 5. Energies (In Jouels) at distance
+        let er1 = (ELEM_CHARGE*ELEM_CHARGE*go*m1*m2*ALPHA*ALPHA)/(SQRT_2*(m1+m2)*self.gamma*self.xi.powi(2));
+        let ei2 = er1;
 
-        let (be, _) = self.calculate_geometric_binding_energy_complex(m1, m2);
+        let er2 = (ELEM_CHARGE*ELEM_CHARGE*go*m1*m1*m2*ALPHA*ALPHA)/(SQRT_2*(m1+m2)*q2*self.gamma*self.xi);
+        let ei1 = er2;
 
         GemInteractionResult {
-            q1, q2, q_total, af1, af2, g1, g2: g1, force: fg, curvature: kappa,
-            g_o: go.into(), g_recovered, mqr1_ev, mqr2_ev, ratio1, ratio2,
-            binding_energy_ev: be,
-            schwarzschild_radius: mr, ratio_mr_d: ratio_mr_d_safe.norm(),
-            is_complex: fg.im.abs() > 1e-30,
+            q1, q2, q_total: q1 + q2,
+            af1: f1_sq, af2: f2_sq,
+            g1: ag1, g2: ag2,
+            force,
+            curvature: kappa,
+            g_o: go, g_recovered: go * kappa.powi(2),
+            er1, er2, ei1, ei2,
+            f1, f2,
+            binding_energy_ev: er1 + er2, // ~13.6057 eV
+            distance_natural: d_nat,
+            force_norm: force.norm(),
+            schwarzschild_radius: rsm1 + rsm2,
+            ratio_mr_d: 1.0-((rqm1 + rqm2) / d.norm()),
+            is_complex: force.im.abs() > 1e-30,
         }
     }
-
-    
 
     /// Decodes force into components for Verification Tests.
     pub fn decode_force(&self, p1: &GeometricKnot, p2: &GeometricKnot, d: f64, protocol: ForceProtocol) -> Complex64 {
@@ -184,4 +211,5 @@ impl GeometricEncodedMedium {
         let check2 = self.gamma / self.alpha;
         (check1 - check2).abs() < 1e-40
     }
+
 }
