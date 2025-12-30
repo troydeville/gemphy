@@ -33,7 +33,7 @@ impl Default for GeometricKnot {
 }
 
 impl GeometricKnot {
-    pub fn new(med: GeometricEncodedMedium, mass: f64, sub_topologies: &[f64], binding_radius: f64, name: &str) -> Self {
+    pub fn new(_: GeometricEncodedMedium, mass: f64, sub_topologies: &[f64], binding_radius: f64, name: &str) -> Self {
         if mass <= 0.0 { return Self::default(); }
 
         // Calculate the Base Length (Wavelength)

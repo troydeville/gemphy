@@ -126,22 +126,22 @@ impl GeometricEncodedMedium {
         let common_den = Complex64::from(8.0 * SQRT_2 * PI.powi(2) * self.epsilon_o) * d3;
         
         // Frequencies based on Effective Charge (includes Coulomb)
-        let f1Q_sq = (q1_effective.powi(2) * self.alpha) / (common_den * m1);
-        let f2Q_sq = (q2_effective.powi(2) * self.alpha) / (common_den * m2);
+        let f1q_sq = (q1_effective.powi(2) * self.alpha) / (common_den * m1);
+        let f2q_sq = (q2_effective.powi(2) * self.alpha) / (common_den * m2);
 
         // Mass-based terms (using Shadow Charge here for consistency with inertia?)
         // Actually, Mathematica uses q1^2 where q1 is Shadow for Gravity.
         // But for Total Force, we rely on f1Q_sq.
-        let f1M_sq = (q1.powi(2) * self.alpha) / (common_den * m1);
-        let f2M_sq = (q2.powi(2) * self.alpha) / (common_den * m2);
+        let f1m_sq = (q1.powi(2) * self.alpha) / (common_den * m1);
+        let f2m_sq = (q2.powi(2) * self.alpha) / (common_den * m2);
 
-        let ag_scaler = (Complex64::from(2.0 * PI * d) / self.alpha);
-        let ag1 = f1Q_sq * ag_scaler;
-        let ag2 = f2Q_sq * ag_scaler;
+        let ag_scaler = Complex64::from(2.0 * PI * d) / self.alpha;
+        let ag1 = f1q_sq * ag_scaler;
+        let ag2 = f2q_sq * ag_scaler;
         let a_q = (ag1.powi(2) + ag2.powi(2)).sqrt();
 
-        let gm1 = f1M_sq * ag_scaler;
-        let gm2 = f2M_sq * ag_scaler;
+        let gm1 = f1m_sq * ag_scaler;
+        let gm2 = f2m_sq * ag_scaler;
         let a_m = (gm1.powi(2) + gm2.powi(2)).sqrt();
 
         let acceleration = Complex64::new(a_m.re, a_q.im);
@@ -159,7 +159,7 @@ impl GeometricEncodedMedium {
 
         GemInteractionResult {
             q1, q2, q_total,
-            af1: f1Q_sq, af2: f2Q_sq,
+            af1: f1q_sq, af2: f2q_sq,
             g1: acceleration, g2: acceleration,
             force,
             curvature: kappa,

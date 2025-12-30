@@ -1,5 +1,5 @@
 
-use gemphy::{knot::GeometricKnot, medium::{ELEM_CHARGE, GAMMA_P, GeometricEncodedMedium}};
+use gemphy::{knot::GeometricKnot, medium::{GAMMA_P, GeometricEncodedMedium}};
 use physical_constants::ELEMENTARY_CHARGE;
 
 fn main() -> std::io::Result<()> {

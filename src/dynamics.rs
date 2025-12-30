@@ -1,10 +1,7 @@
-use std::f64::consts::PI;
-
-use crate::{calculate_mass_frequency, medium, s_constant};
 use crate::geometry::Spatial4D;
 use crate::knot::GeometricKnot;
-use crate::medium::{ALPHA, C, GemInteractionResult}; 
-use num_complex::{Complex64, ComplexFloat};
+use crate::medium::{ GemInteractionResult}; 
+use num_complex::{Complex64};
 
 #[derive(Debug, Clone)]
 pub struct DynamicKnot {

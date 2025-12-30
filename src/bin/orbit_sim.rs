@@ -1,14 +1,12 @@
-use gemphy::{calculate_mass_frequency, s_constant};
 use gemphy::dynamics::DynamicKnot;
 use gemphy::geometry::Spatial4D;
 use gemphy::knot::GeometricKnot;
-use gemphy::medium::{ALPHA, C, GAMMA, GeometricEncodedMedium};
-use num_complex::{Complex64, ComplexFloat};
+use gemphy::medium::{ALPHA, GAMMA, GeometricEncodedMedium};
+use num_complex::{Complex64};
 use num_traits::Zero;
 use physical_constants::ELEMENTARY_CHARGE; 
 use std::fs::File;
 use std::io::Write;
-use std::f64::consts::{PI, SQRT_2};
 
 fn main() -> std::io::Result<()> {
     let medium = GeometricEncodedMedium::new();
@@ -80,7 +78,7 @@ fn main() -> std::io::Result<()> {
     );
 
     let mut file = File::create("orbit_trajectory.csv")?;
-    writeln!(file, "step,time,x,y,vx,vy,f1,energy_magnitude")?;
+    writeln!(file, "step,time,x,y,vx,vy,f1,Er1,Ei1")?;
 
     let steps = 50000; 
     let log_step = 100;
@@ -92,16 +90,16 @@ fn main() -> std::io::Result<()> {
         let interaction = medium.calculate_interaction(&electron.knot, &proton.knot, dist_val.magnitude());
         
         if i % log_step == 0 {
-            let ev: num_complex::Complex<f64> = (interaction.binding_energy / ELEMENTARY_CHARGE);
             let time = i as f64 * dt;
             
-            writeln!(file, "{},{:.4e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e}",
+            writeln!(file, "{},{:.4e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e}, {:.6e}",
                 i,
                 time,
                 electron.position.x.norm(), electron.position.y.norm(),
                 electron.velocity.x.norm(), electron.velocity.y.norm(),
                 interaction.f1.re, 
-                (interaction.er1 + interaction.ei1).norm() / ELEMENTARY_CHARGE
+                (interaction.er1).norm() / ELEMENTARY_CHARGE,
+                interaction.ei1.norm() / ELEMENTARY_CHARGE
             )?;
         }       
     

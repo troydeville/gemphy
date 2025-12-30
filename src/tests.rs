@@ -1,7 +1,6 @@
 use crate::{knot::GeometricKnot, medium::{ELEM_CHARGE, GAMMA_P, GeometricEncodedMedium}};
 use num_complex::Complex64;
-// We import the external crate directly, not via 'crate::'
-use physical_constants::{self, ELEMENTARY_CHARGE}; 
+use physical_constants::{self}; 
 
 #[test]
 fn test_muonic_hydrogen_prediction() {
