@@ -22,7 +22,7 @@ fn main() -> std::io::Result<()> {
     println!("electron: {:#?}", tau);
     println!("proton: {:#?}", proton);
     println!("Result: {:#?}", result);
-    println!("energy (eV): {:#?}", result.binding_energy_ev.norm() / ELEM_CHARGE);
+    println!("energy (eV): {:#?}", result.binding_energy.norm() / ELEM_CHARGE);
     println!("energy (eV): {:#?}", result.er1.norm() / ELEM_CHARGE);
     println!("energy (eV): {:#?}", result.ei1.norm() / ELEM_CHARGE);
 

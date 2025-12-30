@@ -13,6 +13,8 @@ pub const ALPHA_P: f64 = (4.0 * PI * C) / Z_P;
 pub const ALPHA: f64 = ALPHA_P * PHI_Q;
 pub const XI_REAL_POW_2: f64 = 4.0 * PI * SQRT_2;
 pub const G: f64 = (4.0 * PI * PHI_Q)/((SQRT_2) * PHI_M);
+pub const GAMMA_P: f64 = ELEM_CHARGE * ELEM_CHARGE / ALPHA_P;
+pub const GAMMA: f64 = GAMMA_P * ALPHA;
 
 // ==============================================================================
 //  GEOMETRIC ENCODED MEDIUM (GEM)
@@ -30,14 +32,14 @@ pub struct GemInteractionResult {
     pub curvature: Complex64,
     pub g_o: Complex64,
     pub g_recovered: Complex64,
-    pub binding_energy_ev: Complex64,
+    pub binding_energy: Complex64,
     pub er1: Complex64, pub er2: Complex64,
     pub ei1: Complex64, pub ei2: Complex64,
     pub f1: Complex64, pub f2: Complex64,
-    pub distance_natural: f64,
+    pub distance_natural: Complex64,
     pub force_norm: f64,
     pub schwarzschild_radius: f64,
-    pub ratio_mr_d: f64,
+    // pub ratio_mr_d: f64,
     // pub is_complex: bool,
 }
 
@@ -113,8 +115,8 @@ impl GeometricEncodedMedium {
         // 1. Calculate Radii
         let rsm1 = (2.0 * self.g * m1) / self.c.powi(2);
         let rsm2 = (2.0 * self.g * m2) / self.c.powi(2);
-        let rqm1 = self.gamma / (m1 * self.alpha.powi(2));
-        let rqm2 = self.gamma / (m2 * self.alpha.powi(2));
+        let rqm1 = (m1 * d) / (m1 * self.alpha.powi(2));
+        let rqm2 = (m2 * d) / (m2 * self.alpha.powi(2));
 
         // 2. Natural Distance
         let d_nat = (rqm1 + rqm2) - (rsm1 + rsm2);
@@ -195,11 +197,11 @@ impl GeometricEncodedMedium {
             g_o: go, g_recovered: go * kappa.powi(2),
             er1, er2, ei1, ei2,
             f1, f2,
-            binding_energy_ev: er1 + er2,
+            binding_energy: er1 + er2,
             distance_natural: d_nat,
             force_norm: force.norm(),
             schwarzschild_radius: r_schwarzschild_total,
-            ratio_mr_d: 1.0 - ((rqm1 + rqm2) / effective_dist.norm()),
+            // ratio_mr_d: 1.0 - ((rqm1 + rqm2) / effective_dist.norm()),
             
         }
     }
