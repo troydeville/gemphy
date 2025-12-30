@@ -27,7 +27,6 @@ mod tests {
     use super::system::*;
     use super::geometry::*;
 
-    use num_complex::Complex64;
     use approx::assert_relative_eq;
 
     // --- Helper to replicate your 'bin' file distance logic ---
@@ -44,9 +43,9 @@ mod tests {
         let m_tau = 3.16754e-27; // From your file
         let m_proton = 1.67262192595e-27;
 
-        // CRITICAL: Using Geometric Charge (q = Xi * m) as per your bin file
-        let q_tau = medium.xi * m_tau;
-        let q_proton = medium.xi * m_proton;
+        // // CRITICAL: Using Geometric Charge (q = Xi * m) as per your bin file
+        // let q_tau = medium.xi * m_tau;
+        // let q_proton = medium.xi * m_proton;
 
         let tau = GeometricKnot::new(medium.clone(), m_tau, &[-1.0], 0.0, "Tau");
         let proton = GeometricKnot::new(medium.clone(), m_proton, &[1.0], 0.0, "Proton");
@@ -82,8 +81,8 @@ mod tests {
         let pos2 = Spatial4D::new(d_target.into(), 0.0.into(), 0.0.into(), 0.0.into());
 
         // 3. Create Particles
-        let q1 = Complex64::new(-med.e, -med.e);
-        let q2 = Complex64::new(med.e, med.e);
+        // let q1 = Complex64::new(-med.e, -med.e);
+        // let q2 = Complex64::new(med.e, med.e);
         
         let p1: ImpedanceField = ImpedanceField::new(
             0,

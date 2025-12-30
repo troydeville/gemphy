@@ -9,8 +9,6 @@ fn main() -> std::io::Result<()> {
 
     let m1 = M_TAU;
     let m2 = M_PROTON;
-    let q1 = medium.xi * m1;
-    let q2 = medium.xi * m2;
 
     let tau = GeometricKnot::new(medium.clone(), m1, &[-1.0], 0.0, "Tau");
     let proton = GeometricKnot::new(medium.clone(), m2, &[1.0], 0.0, "Proton");
