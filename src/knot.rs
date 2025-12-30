@@ -13,7 +13,7 @@ pub struct GeometricKnot {
     //  0.0 = Neutron
     pub topology: f64, 
     
-    pub geometric_radius_a: f64,
+    pub binding_radius: f64,
     pub base_length: f64,
 }
 
@@ -26,32 +26,32 @@ impl Default for GeometricKnot {
             name: "Vacuum".to_string(),
             mass: GAMMA_P / r,
             topology: 0.0,
-            geometric_radius_a: r / ALPHA.powi(2), 
+            binding_radius: r / ALPHA.powi(2), 
             base_length: r,
         }
     }
 }
 
 impl GeometricKnot {
-    pub fn new(med: GeometricEncodedMedium, mass: f64, sub_topologies: &[f64], phys_radius: f64, name: &str) -> Self {
+    pub fn new(med: GeometricEncodedMedium, mass: f64, sub_topologies: &[f64], binding_radius: f64, name: &str) -> Self {
         if mass <= 0.0 { return Self::default(); }
 
         // Calculate the Base Length (Wavelength)
         // l = Gamma_p / (m * alpha)
-        let base_len = GAMMA_P / (mass * ALPHA);
-
-        let distribution = if mass < med.m_p {
-            med.gamma / (mass * med.alpha.powi(2))
-        } else {
-            (2.0 * med.g * mass) / med.c.powi(2)
-        };
-        let ref_length = if phys_radius > 0.0 { phys_radius } else { distribution * med.alpha.powi(2) };
+        // let base_len = GAMMA_P / (mass * ALPHA);
+        let base_len = binding_radius;
+        
+        // let distribution = if mass < med.m_p {
+        //     med.gamma / (mass * med.alpha.powi(2))
+        // } else {
+        //     (2.0 * med.g * mass) / med.c.powi(2)
+        // };
         let net_topology: f64 = sub_topologies.iter().sum();
         GeometricKnot {
             name: name.to_string(),
             mass,
             topology: net_topology,
-            geometric_radius_a: distribution,
+            binding_radius,
             base_length: base_len,
         }
     }
@@ -59,31 +59,31 @@ impl GeometricKnot {
 
 impl GemSurface for GeometricKnot {
     fn radius_a(&self) -> f64 {
-        self.geometric_radius_a
+        self.binding_radius
     }
 
     // It uses the Horn Torus formulas defined in geometry.rs
     fn volume(&self) -> f64 {
         // V = 2 * pi^2 * r^3
-        2.0 * std::f64::consts::PI.powi(2) * self.geometric_radius_a.powi(3)
+        2.0 * std::f64::consts::PI.powi(2) * self.binding_radius.powi(3)
     }
 
     fn surface_area(&self) -> f64 {
         // A = 4 * pi^2 * r^2
         // This confirms your intuition: The "Light Container" surface 
         // IS the surface of the particle.
-        4.0 * std::f64::consts::PI.powi(2) * self.geometric_radius_a.powi(2)
+        4.0 * std::f64::consts::PI.powi(2) * self.binding_radius.powi(2)
     }
 
     fn parametric_surface(&self, u: f64, v: f64) -> [f64; 3] {
         // Delegate to the math model logic, but using the Knot's radius
-        let r = self.geometric_radius_a;
+        let r = self.binding_radius;
         let tube_factor = 1.0 + v.cos();
         [r * u.cos() * tube_factor, r * tube_factor * u.sin(), r * v.sin()]
     }
 
     fn implicit_equation(&self, x: f64, y: f64, z: f64) -> f64 {
-        let r = self.geometric_radius_a;
+        let r = self.binding_radius;
         let sum_sq = x*x + y*y + z*z;
         sum_sq.powi(2) - (4.0 * r.powi(2) * (x*x + y*y))
     }

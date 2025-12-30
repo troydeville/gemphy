@@ -1,5 +1,6 @@
 use std::f64::consts::{PI, SQRT_2};
 use num_complex::{Complex64, ComplexFloat};
+use physical_constants::ELEMENTARY_CHARGE;
 
 use crate::knot::GeometricKnot;
 
@@ -137,23 +138,23 @@ impl GeometricEncodedMedium {
         // We use Pythagorean addition to "soften" the distance.
         // This naturally prevents the singularity by treating the radius as an orthogonal offset.
         let r_schwarzschild_total = rsm1 + rsm2;
-        let epsilon = 1.0e-35; // Planck floor
-        let geometric_floor = r_schwarzschild_total + epsilon;
+        // let epsilon = 1.0e-35; // Planck floor
+        // let geometric_floor = r_schwarzschild_total;
 
         // ALGEBRAIC DECODING:
         // effective_mag = sqrt(|d|^2 + floor^2)
         // This expression is smooth, differentiable, and singularity-free.
-        let dist_sq = d.norm_sqr();
-        let floor_sq = geometric_floor.powi(2);
-        let effective_mag = (dist_sq + floor_sq).sqrt();
+        // let dist_sq = d.norm_sqr();
+        // let floor_sq = geometric_floor.powi(2);
+        // let effective_mag = (dist_sq + floor_sq).sqrt();
         
         // Scale the original vector 'd' to this new magnitude
         // We add a tiny epsilon to the denominator to safely handle the exact d=0.0 case
         // without an 'if' check. (effective_mag / 0.0 would be inf).
-        let safe_norm = d.norm() + f64::MIN_POSITIVE; 
-        let scale = effective_mag / safe_norm;
+        // let safe_norm = d.norm() + f64::MIN_POSITIVE; 
+        // let scale = effective_mag / safe_norm;
         
-        let effective_dist = d * scale;
+        let effective_dist = d ;
         let d3 = effective_dist.powi(3);
 
         let common_den = Complex64::from(8.0 * SQRT_2 * PI.powi(2) * self.epsilon_o) * d3;
@@ -162,36 +163,51 @@ impl GeometricEncodedMedium {
         let q1_active_val = p1.topology * self.e; 
         let q2_active_val = p2.topology * self.e;
 
+        // let q1_effective = Complex64::new(q1_shadow_val, q1_active_val);
         let q1_effective = Complex64::new(q1_shadow_val, q1_active_val);
+        // let q2_effective = Complex64::new(q2_shadow_val, q2_active_val);
         let q2_effective = Complex64::new(q2_shadow_val, q2_active_val);
 
-        let f1_sq = (q1_effective.powi(2) * self.alpha) / (common_den * m1);
-        let f2_sq = (q2_effective.powi(2) * self.alpha) / (common_den * m2);
+        let f1Q_sq = (q1_effective.powi(2) * self.alpha) / (common_den * m1);
+        let f2Q_sq = (q2_effective.powi(2) * self.alpha) / (common_den * m2);
 
-        let f1 = f1_sq.sqrt();
-        let f2 = f2_sq.sqrt();
+        let f1M_sq = (q1.powi(2) * self.alpha) / (common_den * m1);
+        let f2M_sq = (q2.powi(2) * self.alpha) / (common_den * m2);
+
+        // let fq1 = f1Q_sq.sqrt();
+        // let fq2 = f2Q_sq.sqrt();
 
         // Accelerations
-        let ag_scaler = (Complex64::from(2.0 * PI) * effective_dist) / self.alpha;
-        let ag1 = f1_sq * ag_scaler;
-        let ag2 = f2_sq * ag_scaler;
-        
-        let force = ag1 * Complex64::from(m2);
+        let ag_scaler = (Complex64::from(2.0 * PI * d) / self.alpha);
+        let ag1 = f1Q_sq * ag_scaler;
+        let ag2 = f2Q_sq * ag_scaler;
+        let a_q: Complex64 = (ag1.powi(2) + ag2.powi(2)).sqrt();
 
-        // 6. Energy Allocation
-        let den_factor = Complex64::from(2.0 * m_total * self.gamma);
-        let e2_go_alpha2 = Complex64::from(self.e.powi(2)) * go * (m1 * m2) * self.alpha.powi(2);
+        let gm1 = f1M_sq * ag_scaler;
+        let gm2 = f2M_sq * ag_scaler;
+        let a_m: Complex64 = (gm1.powi(2) + gm2.powi(2)).sqrt();
+
+        let acceleration = Complex64::new(a_m.re, a_q.im);
         
-        let er1 = e2_go_alpha2 / (den_factor * self.xi.powi(2));
-        let er2 = (e2_go_alpha2 * m1) / (den_factor * q2 * self.xi);
+        // let force = SQRT_2 * ag1 * Complex64::from(m2);
+        let f1 = (ag1+gm1) * Complex64::from(m1) * SQRT_2;
+        let f2 = (ag2+gm2)  * Complex64::from(m2) * SQRT_2;
+        let force = (f1.powi(2) + f2.powi(2)).sqrt();
+
+        // // 6. Energy Allocation
+        // let den_factor = Complex64::from(2.0 * m_total * self.gamma);
+        // let e2_go_alpha2 = Complex64::from(self.e.powi(2)) * go * (m1 * m2) * self.alpha.powi(2);
+        // *(ALPHA / (PI * PI))*2.0/SQRT_2
+        let er1 = (ELEMENTARY_CHARGE.powi(2) * go * m1 * m2 *ALPHA.powi(2))/(2.0*(m1+m2)*GAMMA*self.xi.powi(2));
+        let er2 = (ELEMENTARY_CHARGE.powi(2) * go * m1 * m1 * m2 *ALPHA.powi(2))/(2.0*(m1+m2)*q2*GAMMA*self.xi);
         
-        let ei1 = (Complex64::from(self.e.powi(2)) * go * m1 * q1 * self.alpha.powi(2)) / (den_factor * self.xi.powi(3));
-        let ei2 = er1;
+        let ei1 = (ELEMENTARY_CHARGE.powi(2) * go * m1 * q1 *ALPHA.powi(2))/(2.0*(m1+m2)*GAMMA*self.xi.powi(3));
+        let ei2 = (ELEMENTARY_CHARGE.powi(2) * go * m1 * m2 *ALPHA.powi(2))/(2.0*(m1+m2)*GAMMA*self.xi.powi(2));
 
         GemInteractionResult {
             q1, q2, q_total,
-            af1: f1_sq, af2: f2_sq,
-            g1: ag1, g2: ag2,
+            af1: f1Q_sq, af2: f2Q_sq,
+            g1: acceleration, g2: acceleration,
             force,
             curvature: kappa,
             g_o: go, g_recovered: go * kappa.powi(2),

@@ -146,7 +146,7 @@ fn test_orbit_generation() {
         let interaction = medium.calculate_interaction(&proton.knot, &electron.knot, dist_val);
 
         // Apply corrected force
-        electron.apply_interaction(&interaction, proton.position);
+        electron.apply_interaction(&interaction, &proton);
         electron.integrate(dt);
 
         if i % 2 == 0 {
