@@ -1,5 +1,6 @@
 
-use gemphy::{knot::GeometricKnot, medium::{ELEM_CHARGE, GeometricEncodedMedium}};
+use gemphy::{knot::GeometricKnot, medium::{ELEM_CHARGE, GAMMA_P, GeometricEncodedMedium}};
+use physical_constants::ELEMENTARY_CHARGE;
 
 fn main() -> std::io::Result<()> {
     let medium = GeometricEncodedMedium::new();
@@ -15,18 +16,18 @@ fn main() -> std::io::Result<()> {
     let muon = GeometricKnot::new(medium.clone(), m1, &[-1.0], 0.0, "Muon");
     let proton = GeometricKnot::new(medium.clone(), m2, &[1.0], 0.0, "Proton");
 
-    let rg1 = (medium.gamma_p / (muon.mass * medium.alpha)).powi(2);
-    let rg2 = (medium.gamma_p / (proton.mass * medium.alpha)).powi(2);
+    let rg1 = (GAMMA_P/ (muon.mass * medium.alpha)).powi(2);
+    let rg2 = (GAMMA_P / (proton.mass * medium.alpha)).powi(2);
     let d = (rg1+rg2).sqrt();
 
     let result = medium.calculate_interaction(&muon, &proton, d.into());
 
-    println!("electron:            {:#?}", muon);
+    println!("muon:                {:#?}", muon);
     println!("proton:              {:#?}", proton);
     println!("Result:              {:#?}", result);
-    println!("er1 (eV):            {:#?}", result.er1.norm() / ELEM_CHARGE);
-    println!("ei1 (eV):            {:#?}", result.ei1.norm() / ELEM_CHARGE);
-    println!("binding_energy (eV): {:#?}", result.binding_energy.norm() / ELEM_CHARGE);
-    println!("Go :                 {:#?}", result.g1.norm());
+    println!("er1 (eV):            {:#?}", result.er1.norm()/ ELEMENTARY_CHARGE);
+    println!("ei1 (eV):            {:#?}", result.ei1.norm()/ ELEMENTARY_CHARGE);
+    println!("binding_energy (eV): {:#?}", result.binding_energy.norm()/ ELEMENTARY_CHARGE);
+    println!("Go :                 {:#?}", result.g_o);
     Ok(())
 }

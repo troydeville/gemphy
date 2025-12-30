@@ -57,6 +57,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     println!("Data generation complete. Saved to 'gem_plot_data.csv'.");
     Ok(())
 }
+
 // use std::fs::File;
 // use std::io::Write;
 // use gemphy::GeometricEncodedMedium;

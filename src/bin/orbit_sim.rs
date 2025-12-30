@@ -1,3 +1,4 @@
+use gemphy::{calculate_mass_frequency, s_constant};
 use gemphy::dynamics::DynamicKnot;
 use gemphy::geometry::Spatial4D;
 use gemphy::knot::GeometricKnot;
@@ -26,134 +27,93 @@ fn main() -> std::io::Result<()> {
 
     let electron_knot = GeometricKnot::new(
         medium.clone(),
-        m2,
+        m1, 
         &[-1.0], 
         GAMMA / (m1 * ALPHA.powi(2)),
         "Electron"
     );
 
-    // 2. Geometric Time Configuration
-    // Frequency of the knot
+    // 2. Geometric Configuration
     let freq = medium.calculate_mass_frequency(electron_knot.mass);
-    // let f1 = medium.calculate_mass_frequency(electron_knot.mass);
-    // let f2 = medium.calculate_mass_frequency(proton_knot.mass);
-    let period = 1.0 / freq;
+    let r_start = electron_knot.binding_radius; 
+
+    // --- DYNAMIC STABILITY FIX ---
+    let initial_dist = Spatial4D::new(
+        Complex64::from(r_start), Complex64::zero(), Complex64::zero(), Complex64::zero()
+    );
     
-    // User Formula: dt based on 720-degree (4*PI) revolution gaps
-    let dt = period / (4.0 * PI.powi(2));
+    // FIX: Swap order to (Electron, Proton) so m1=Electron. 
+    // This aligns with the Mathematica derivation for Energy formulas.
+    // Force magnitude remains the same (Newton's 3rd Law).
+    let interaction_init = medium.calculate_interaction(&electron_knot, &proton_knot, initial_dist.magnitude());
+    
+    let force_magnitude = interaction_init.force.norm();
+    
+    // Velocity v = sqrt(F * r / m_electron)
+    let v_stable = (force_magnitude * r_start / m1).sqrt();
 
-    // 3. Geometric Space Configuration
-    // User Formula: Start at the Base Length
-
-    let r_start = electron_knot.binding_radius; // Reduced radius for stable orbit
-
-    // User Formula: Velocity coupled to Distance and Frequency
-    // v = r * omega (rolling condition)
-    let v_start = ALPHA * r_start * freq;
-
+    // Use the Period from Orbit Sim (Rydberg scale ~1e-16s)
+    let period =  1.0 / freq;
+    // Divide period into steps for smooth integration (e.g. 1000 steps per orbit)
+    let dt = period / 1000.0; 
+    
     println!("--- Initial Geometric Configuration ---");
     println!("Radius (r):    {:.4e} m", r_start);
-    println!("Frequency (f): {:.4e} Hz", freq);
-    println!("Velocity (v):  {:.4e} m/s", v_start);
+    println!("Force (F):     {:.4e} N", force_magnitude);
+    println!("Velocity (v):  {:.4e} m/s (Stable Orbit)", v_stable);
     println!("Time Step (dt): {:.4e} s", dt);
 
-    // 4. Initialize Dynamics
     let mut proton = DynamicKnot::new(
-        proton_knot, Spatial4D::zero()
+        proton_knot.clone(), Spatial4D::zero()
     );
     
     let mut electron = DynamicKnot::new(
-        electron_knot, 
-        Spatial4D::new(
-            Complex64::from(r_start),
-            Complex64::zero(),           
-            Complex64::zero(),           
-            Complex64::zero()           
-        )
+        electron_knot.clone(), 
+        initial_dist
     );
 
-    // Apply Calculated Velocity (Tangential)
     electron.velocity = Spatial4D::new(
         Complex64::zero(),
-        Complex64::from(v_start), // Y-axis
+        Complex64::from(v_stable), 
         Complex64::zero(),
         Complex64::zero()
     );
 
-    // 5. Run Simulation
     let mut file = File::create("orbit_trajectory.csv")?;
-    writeln!(file, "step,time,x,y,vx,vy,f1,f2,energy_real,energy_imag,energy_magnitude")?;
+    writeln!(file, "step,time,x,y,vx,vy,f1,energy_magnitude")?;
 
-    let steps = 10 * 1024; 
+    let steps = 50000; 
+    let log_step = 100;
 
     for i in 0..steps {
-        // let displacement = proton.position - electron.position;
-        // let dist_val = displacement.magnitude(); 
-        let dist_val = &electron.distance(&proton);
-        let interaction = medium.calculate_interaction(&proton.knot, &electron.knot, dist_val.magnitude());
-
-        if i % 10 == 0 {
-            let current_time = dt * i as f64;
-
-            let eV = (interaction.binding_energy/ELEMENTARY_CHARGE)* (ALPHA / (4.0 * PI));
+        let dist_val = electron.distance(&proton);
+        
+        // FIX: Swap order here as well to maintain consistency
+        let interaction = medium.calculate_interaction(&electron.knot, &proton.knot, dist_val.magnitude());
+        
+        if i % log_step == 0 {
+            let ev: num_complex::Complex<f64> = (interaction.binding_energy / ELEMENTARY_CHARGE);
+            let time = i as f64 * dt;
             
-            // Calculate Effective Force directly from Joules
-            // let energy_joules = interaction.binding_energy;
-            // let effective_force = energy_joules/ dist_val;
-            // *(3.0.sqrt()/(4.0 * PI).powi(2))
-            // (interaction.er1.norm() / ELEMENTARY_CHARGE) * (ALPHA)*(medium.s.sqrt() * ALPHA)+8.0*((3.0.sqrt()/(4.0 * PI).powi(2))),
-            writeln!(file, "{},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e}",
+            writeln!(file, "{},{:.4e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e}",
                 i,
-                current_time,
+                time,
                 electron.position.x.norm(), electron.position.y.norm(),
                 electron.velocity.x.norm(), electron.velocity.y.norm(),
-                
-                interaction.f1.norm(), // Now correctly ~10^-8 N
-                interaction.force, // Geometric Torque
-                
-                eV.re, // eV
-                eV.im,
-                // interaction.g_o * (electron.knot.mass / r_start.powi(2))
-                eV.norm()
+                interaction.f1.re, 
+                (interaction.er1 + interaction.ei1).norm() / ELEMENTARY_CHARGE
             )?;
         }       
-        
-        
-        
-        
-        // // Apply Forces
+    
+        // 1. Accumulate Forces
         electron.apply_interaction(&interaction, &proton);
-        // electron.integrate(dt);
-
-        proton.apply_interaction(&interaction, &electron);
-
-
+        
+        // 2. Integrate with Main Loop Time Step
+        electron.integrate(dt);
+        
+        // 3. Clear Forces
         electron.clear_forces();
         proton.clear_forces();
-        
-
-        
-
-        // if i % 10 == 0 {
-        //     let current_time = dt * i as f64;
-            
-        //     // Calculate Effective Force directly from Joules
-        //     let energy_joules = interaction.binding_energy;
-        //     let effective_force = energy_joules/ dist_val;
-
-        //     writeln!(file, "{},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e},{:.6e}",
-        //         i,
-        //         current_time,
-        //         electron.position.x, electron.position.y,
-        //         electron.velocity.x, electron.velocity.y,
-                
-        //         effective_force, // Now correctly ~10^-8 N
-        //         interaction.force, // Geometric Torque
-                
-        //         interaction.binding_energy / ELEMENTARY_CHARGE,
-        //         interaction.binding_energy / ELEMENTARY_CHARGE // eV
-        //     )?;
-        // }
     }
 
     println!("Simulation Complete. Data saved to 'orbit_trajectory.csv'");

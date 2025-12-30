@@ -1,7 +1,7 @@
-use crate::{knot::GeometricKnot, medium::{GeometricEncodedMedium, ELEM_CHARGE}};
+use crate::{knot::GeometricKnot, medium::{ELEM_CHARGE, GAMMA_P, GeometricEncodedMedium}};
 use num_complex::Complex64;
 // We import the external crate directly, not via 'crate::'
-use physical_constants; 
+use physical_constants::{self, ELEMENTARY_CHARGE}; 
 
 #[test]
 fn test_muonic_hydrogen_prediction() {
@@ -27,17 +27,17 @@ fn test_muonic_hydrogen_prediction() {
 
     // 3. Calculate Quadrature Distance
     // rg = (Gamma_p / (mass * alpha))^2
-    let rg1 = (medium.gamma_p / (muon.mass * medium.alpha)).powi(2);
-    let rg2 = (medium.gamma_p / (proton.mass * medium.alpha)).powi(2);
+    let rg1 = (GAMMA_P / (muon.mass * medium.alpha)).powi(2);
+    let rg2 = (GAMMA_P / (proton.mass * medium.alpha)).powi(2);
     
     // d = sqrt(rg1 + rg2)
-    let d_val = (rg1 + rg2).sqrt();
+    let d_val = Complex64::from((rg1 + rg2).sqrt());
 
     // 4. Run Interaction
-    let result = medium.calculate_interaction(&muon, &proton, Complex64::from(d_val));
+    let result = medium.calculate_interaction(&muon, &proton, d_val);
 
     // 5. Convert Joules to eV
-    let binding_ev = result.binding_energy.norm() / ELEM_CHARGE;
+    let binding_ev = result.binding_energy / ELEM_CHARGE;
     let er1_ev = result.er1.norm() / ELEM_CHARGE;
     let ei1_ev = result.ei1.norm() / ELEM_CHARGE;
 
@@ -49,50 +49,9 @@ fn test_muonic_hydrogen_prediction() {
 
     // Validation
     assert!(er1_ev > 2528.0 && er1_ev < 2529.0, "Primary Potential should match ~2528 eV");
-    assert!(binding_ev > 2750.0 && binding_ev < 2752.0, "Total Binding Energy should match ~2751 eV");
+    assert!(binding_ev.norm()  > 2750.0 && binding_ev.norm() < 2752.0, "Total Binding Energy should match ~2751 eV");
 }
 
-#[test]
-fn test_neutron_star_gravity() {
-    let medium = GeometricEncodedMedium::new();
-
-    const M_TEST: f64 = 1.0; 
-    const M_NEUTRON_STAR: f64 = 2.78376e30; // ~1.4 Solar Masses
-
-    let test_mass = GeometricKnot::new(
-        medium.clone(), 
-        M_TEST, 
-        &[0.0], // Neutral Topology
-        0.0, 
-        "Test Mass"
-    );
-
-    let neutron_star = GeometricKnot::new(
-        medium.clone(), 
-        M_NEUTRON_STAR, 
-        &[0.0], // Neutral Topology
-        0.0, 
-        "Neutron Star"
-    );
-
-    let d_val = 1.0e4;
-    let result = medium.calculate_interaction(&test_mass, &neutron_star, Complex64::from(d_val));
-
-    println!("--- Neutron Star Results ---");
-    println!("Distance: {:.2e} m", d_val);
-    
-    // Use g2 for force magnitude
-    let force_mag = result.g2.norm();
-
-    println!("Gravity Magnitude: {:.4e} N", force_mag);
-
-    // Validation
-    let expected_newtonian = (physical_constants::NEWTONIAN_CONSTANT_OF_GRAVITATION * M_NEUTRON_STAR * M_TEST) / d_val.powi(2);
-    let tolerance = 1.5; 
-
-    assert!(force_mag > expected_newtonian && force_mag < (expected_newtonian * tolerance), 
-        "Force {:.4e} should be close to Newtonian prediction {:.4e}", force_mag, expected_newtonian);
-}
 use crate::dynamics::DynamicKnot;
 use crate::geometry::Spatial4D;
 

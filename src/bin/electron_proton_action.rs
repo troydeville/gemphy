@@ -1,5 +1,6 @@
-use gemphy::{knot::GeometricKnot, medium::{ELEM_CHARGE, GeometricEncodedMedium}};
+use gemphy::{knot::GeometricKnot, medium::{ELEM_CHARGE, GAMMA_P, GeometricEncodedMedium}};
 use num_complex::{Complex64, ComplexFloat};
+use physical_constants::ELEMENTARY_CHARGE;
 
 fn main() -> std::io::Result<()> {
 
@@ -22,24 +23,19 @@ fn main() -> std::io::Result<()> {
     let proton = GeometricKnot::new(medium.clone(), m2, topology2, 0.0, "Proton");
 
     
-    let rg1 = (medium.gamma_p / (electron.mass * medium.alpha)).powi(2);
-    let rg2 = (medium.gamma_p / (proton.mass * medium.alpha)).powi(2);
+    let rg1 = (GAMMA_P / (electron.mass * medium.alpha)).powi(2);
+    let rg2 = (GAMMA_P / (proton.mass * medium.alpha)).powi(2);
     let d = (rg1+rg2).sqrt();
 
     let result = medium.calculate_interaction(&electron, &proton, d.into());
 
-    println!("electron: {:#?}", electron);
-    println!("proton: {:#?}", proton);
+    println!("muon:                {:#?}", electron);
+    println!("proton:              {:#?}", proton);
+    println!("Result:              {:#?}", result);
+    println!("er1 (eV):            {:#?}", result.er1.norm()/ ELEMENTARY_CHARGE);
+    println!("ei1 (eV):            {:#?}", result.ei1.norm()/ ELEMENTARY_CHARGE);
+    println!("binding_energy (eV): {:#?}", result.binding_energy.norm()/ ELEMENTARY_CHARGE);
+    println!("Go :                 {:#?}", result.g_o);   
 
-    println!("Result: {:#?}", result);
-    println!("(result.q1 / m2).abs(): {:#?}", (result.q1 / m2).abs());
-    println!("(result.q2 / m1).abs(): {:#?}", (result.q2 / m1).abs());
-    
-    println!(" ((result.q2 / m1).abs()/(result.q1 / m2).abs()).sqrt(): {:#?}", ((result.q2 / m2)/(result.q1 / m2)).abs());
-    // println!(" ((result.q2 / m1).abs()/(result.q1 / m2).abs()).sqrt(): {:#?}", ((result.q2 / m1).abs()/(result.q1 / m2).abs()).sqrt());
-    // println!(" ((result.q2 / m1).abs()/(result.q1 / m2).abs()).sqrt(): {:#?}", (m2/m1).powi(2));
-    println!("Abs[binding_energy_ev] = {:#?}", result.er1.norm() / ELEM_CHARGE
-
-);
     Ok(())
 }
