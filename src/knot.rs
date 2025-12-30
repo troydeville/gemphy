@@ -1,3 +1,5 @@
+use std::f64::consts::PI;
+
 use num_complex::Complex64;
 
 use crate::{geometry::Spatial4D, medium::GeometricEncodedMedium};
@@ -8,25 +10,33 @@ use crate::{geometry::Spatial4D, medium::GeometricEncodedMedium};
 pub struct GeometricKnot {
     pub name: String,
     pub mass: f64,
-    pub charge: Complex64,
-    pub geometric_radius_a: f64, 
+    // This represents the "Net Twist" or winding number.
+    // -1.0 = Electron
+    // +1.0 = Proton
+    //  0.0 = Neutron
+    pub topology: f64, 
+    
+    pub geometric_radius_a: f64,
     pub base_length: f64,
 }
 
 impl Default for GeometricKnot {
     fn default() -> Self {
+
+        let r = (4.0 * PI).powf(0.25);
+        
         Self {
             name: "Vacuum".to_string(),
             mass: 0.0,
-            charge: Complex64::default(),
-            geometric_radius_a: 0.0,
-            base_length: 0.0,
+            topology: 0.0,
+            geometric_radius_a: r, 
+            base_length: r,
         }
     }
 }
 
 impl GeometricKnot {
-    pub fn new(med: GeometricEncodedMedium, mass: f64, charge: Complex64, phys_radius: f64, name: &str) -> Self {
+    pub fn new(med: GeometricEncodedMedium, mass: f64, sub_topologies: &[f64], phys_radius: f64, name: &str) -> Self {
         if mass <= 0.0 { return Self::default(); }
 
         let distribution = if mass < med.m_p {
@@ -35,11 +45,11 @@ impl GeometricKnot {
             (2.0 * med.g * mass) / med.c.powi(2)
         };
         let ref_length = if phys_radius > 0.0 { phys_radius } else { distribution * med.alpha.powi(2) };
-
+        let net_topology: f64 = sub_topologies.iter().sum();
         GeometricKnot {
             name: name.to_string(),
             mass,
-            charge,
+            topology: net_topology,
             geometric_radius_a: distribution,
             base_length: ref_length,
         }

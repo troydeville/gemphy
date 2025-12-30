@@ -12,8 +12,8 @@ fn main() -> std::io::Result<()> {
     let q1 = medium.xi * m1;
     let q2 = medium.xi * m2;
 
-    let tau = GeometricKnot::new(medium.clone(), m1, q1, 0.0, "Tau");
-    let proton = GeometricKnot::new(medium.clone(), m2, q2, 0.0, "Proton");
+    let tau = GeometricKnot::new(medium.clone(), m1, &[-1.0], 0.0, "Tau");
+    let proton = GeometricKnot::new(medium.clone(), m2, &[1.0], 0.0, "Proton");
 
     let rg1 = (medium.gamma_p / (tau.mass * medium.alpha)).powi(2);
     let rg2 = (medium.gamma_p / (proton.mass * medium.alpha)).powi(2);

@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     
     // 2. Define the Sun using your Knot logic (Shadow Charge = Xi * Mass)
     // We assume the Sun is the central anchor.
-    let sun = GeometricKnot::new(med.clone(), M_SUN, med.xi * M_SUN, 0.0, "Sun");
+    let sun = GeometricKnot::new(med.clone(), M_SUN, &[0.0], 0.0, "Sun");
 
     // 3. Prepare Output File
     let mut file = File::create("gem_plot_data.csv")?;
@@ -26,7 +26,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     
     // Use a test mass (e.g., Earth Mass) to visualize the field strength at distance d
     let m_earth = 5.972e24;
-    let earth = GeometricKnot::new(med.clone(), m_earth, med.xi * m_earth, 0.0, "EarthProbe");
+    let earth = GeometricKnot::new(med.clone(), m_earth, &[0.0], 0.0, "EarthProbe");
 
     for i in 0..steps {
         // Logarithmic step generation

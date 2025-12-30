@@ -17,3 +17,4 @@ anyhow = "1.0"
 
 [dev-dependencies]
 approx = "0.5"  # For floating-point assertions in tests
+physical_constants = "=0.4.1"

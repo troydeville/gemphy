@@ -38,7 +38,7 @@ pub struct GemInteractionResult {
     pub force_norm: f64,
     pub schwarzschild_radius: f64,
     pub ratio_mr_d: f64,
-    pub is_complex: bool,
+    // pub is_complex: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -104,6 +104,7 @@ impl GeometricEncodedMedium {
         }
     }
 
+
     pub fn calculate_interaction(&self, p1: &GeometricKnot, p2: &GeometricKnot, d: Complex64) -> GemInteractionResult {
         let m1 = p1.mass;
         let m2 = p2.mass;
@@ -115,42 +116,67 @@ impl GeometricEncodedMedium {
         let rqm1 = self.gamma / (m1 * self.alpha.powi(2));
         let rqm2 = self.gamma / (m2 * self.alpha.powi(2));
 
-        // 2. Natural Distance (Mathematica: distance)
+        // 2. Natural Distance
         let d_nat = (rqm1 + rqm2) - (rsm1 + rsm2);
 
-        // 3. Shadow Charges (Independent of Xi)
-        // Formula: Sqrt[4π * ε0 * c^2 * m * rs]
-        let q1_val = (4.0 * PI * self.epsilon_o * self.c.powi(2) * m1 * rsm1).sqrt();
-        let q2_val = (4.0 * PI * self.epsilon_o * self.c.powi(2) * m2 * rsm2).sqrt();
-        let q1 = Complex64::from(q1_val);
-        let q2 = Complex64::from(q2_val);
+        // 3. Shadow Charges (4*PI scaling for Energy Correctness)
+        let q1_shadow_val = (4.0 * PI * self.epsilon_o * self.c.powi(2) * m1 * rsm1).sqrt();
+        let q2_shadow_val = (4.0 * PI * self.epsilon_o * self.c.powi(2) * m2 * rsm2).sqrt();
+        
+        let q1 = Complex64::from(q1_shadow_val);
+        let q2 = Complex64::from(q2_shadow_val);
         let q_total = q1 + q2;
 
-        // 4. Curvature (Kappa) and Recovered G
-        // Formula: ((m1+m2)/(q1+q2)) * Xi
+        // 4. Curvature
         let kappa = (Complex64::from(m_total) / q_total) * self.xi;
         let go = Complex64::from(self.g) / kappa.powi(2);
 
-        // 5. System Dynamics using passed distance d
-        let dist = d;
-        let d3 = dist.powi(3);
+        // 5. System Dynamics (NO CONDITIONS)
+        // We use Pythagorean addition to "soften" the distance.
+        // This naturally prevents the singularity by treating the radius as an orthogonal offset.
+        let r_schwarzschild_total = rsm1 + rsm2;
+        let epsilon = 1.0e-35; // Planck floor
+        let geometric_floor = r_schwarzschild_total + epsilon;
 
-        // Frequency Squared (Wolfram: f1Sq, f2Sq)
+        // ALGEBRAIC DECODING:
+        // effective_mag = sqrt(|d|^2 + floor^2)
+        // This expression is smooth, differentiable, and singularity-free.
+        let dist_sq = d.norm_sqr();
+        let floor_sq = geometric_floor.powi(2);
+        let effective_mag = (dist_sq + floor_sq).sqrt();
+        
+        // Scale the original vector 'd' to this new magnitude
+        // We add a tiny epsilon to the denominator to safely handle the exact d=0.0 case
+        // without an 'if' check. (effective_mag / 0.0 would be inf).
+        let safe_norm = d.norm() + f64::MIN_POSITIVE; 
+        let scale = effective_mag / safe_norm;
+        
+        let effective_dist = d * scale;
+        let d3 = effective_dist.powi(3);
+
         let common_den = Complex64::from(8.0 * SQRT_2 * PI.powi(2) * self.epsilon_o) * d3;
-        let f1_sq = (q1.powi(2) * self.alpha) / (common_den * m1);
-        let f2_sq = (q2.powi(2) * self.alpha) / (common_den * m2);
+
+        // --- Active Charge (Topology Derived) ---
+        let q1_active_val = p1.topology * self.e; 
+        let q2_active_val = p2.topology * self.e;
+
+        let q1_effective = Complex64::new(q1_shadow_val, q1_active_val);
+        let q2_effective = Complex64::new(q2_shadow_val, q2_active_val);
+
+        let f1_sq = (q1_effective.powi(2) * self.alpha) / (common_den * m1);
+        let f2_sq = (q2_effective.powi(2) * self.alpha) / (common_den * m2);
 
         let f1 = f1_sq.sqrt();
         let f2 = f2_sq.sqrt();
 
-        // Accelerations (Wolfram: ag1, ag2)
-        let ag_scaler = (Complex64::from(2.0 * PI) * dist) / self.alpha;
+        // Accelerations
+        let ag_scaler = (Complex64::from(2.0 * PI) * effective_dist) / self.alpha;
         let ag1 = f1_sq * ag_scaler;
         let ag2 = f2_sq * ag_scaler;
+        
         let force = ag1 * Complex64::from(m2);
 
-        // 6. Energy Allocation (Mathematica: Er1, Er2, Ei1, Ei2)
-        // Using 2.0 in denominator as per Mathematica update
+        // 6. Energy Allocation
         let den_factor = Complex64::from(2.0 * m_total * self.gamma);
         let e2_go_alpha2 = Complex64::from(self.e.powi(2)) * go * (m1 * m2) * self.alpha.powi(2);
         
@@ -172,11 +198,13 @@ impl GeometricEncodedMedium {
             binding_energy_ev: er1 + er2,
             distance_natural: d_nat,
             force_norm: force.norm(),
-            schwarzschild_radius: rsm1 + rsm2,
-            ratio_mr_d: 1.0 - ((rqm1 + rqm2) / dist.norm()),
-            is_complex: force.im.abs() > 1e-30,
+            schwarzschild_radius: r_schwarzschild_total,
+            ratio_mr_d: 1.0 - ((rqm1 + rqm2) / effective_dist.norm()),
+            
         }
     }
+
+
     /// Decodes force into components for Verification Tests.
     pub fn decode_force(&self, p1: &GeometricKnot, p2: &GeometricKnot, d: f64, protocol: ForceProtocol) -> Complex64 {
          let d_c = Complex64::from(d);
@@ -189,7 +217,7 @@ impl GeometricEncodedMedium {
             ForceProtocol::Electromagnetism => {
                  // Coulomb Force
                  let k_c = 1.0 / (4.0 * PI * self.epsilon_o);
-                 Complex64::from(k_c) * ((p1.charge * p2.charge) / d_c.powi(2))
+                 Complex64::from(k_c) * ((ELEM_CHARGE * ELEM_CHARGE) / d_c.powi(2))
             }
          }
     }

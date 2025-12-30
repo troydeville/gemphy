@@ -10,13 +10,16 @@ fn main() -> std::io::Result<()> {
     let m1 = M_ELECTRON;
     let m2 = M_PROTON;
 
-    let q1 = Complex64::new(-medium.e, -medium.e);
-    let q2 = Complex64::new(medium.e, medium.e);
+    // let q1 = Complex64::new(-medium.e, -medium.e);
+    // let q2 = Complex64::new(medium.e, medium.e);
+
+    let topology1: &[f64] = &[-1.0];
+    let topology2: &[f64] = &[1.0];
 
     // let electron = GeometricKnot::new(m1, Complex64::new(-medium.e / SQRT_2, -medium.e / SQRT_2), 0.0, "Electron");
     // let proton = GeometricKnot::new(m2, Complex64::new(medium.e / SQRT_2, medium.e / SQRT_2), 0.0, "Proton");
-    let electron = GeometricKnot::new(medium.clone(), m1, q1, 0.0, "Electron");
-    let proton = GeometricKnot::new(medium.clone(), m2, q2, 0.0, "Proton");
+    let electron = GeometricKnot::new(medium.clone(), m1, topology1, 0.0, "Electron");
+    let proton = GeometricKnot::new(medium.clone(), m2, topology2, 0.0, "Proton");
 
     
     let rg1 = (medium.gamma_p / (electron.mass * medium.alpha)).powi(2);
