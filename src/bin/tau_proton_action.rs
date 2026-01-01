@@ -19,7 +19,7 @@ fn main() -> std::io::Result<()> {
 
     let result = medium.calculate_interaction(&tau, &proton, d.into());
 
-    println!("electron: {:#?}", tau);
+    println!("tau: {:#?}", tau);
     println!("proton: {:#?}", proton);
     println!("Result: {:#?}", result);
     println!("energy (eV): {:#?}", result.binding_energy / ELEM_CHARGE);
