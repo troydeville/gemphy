@@ -1,5 +1,6 @@
 
 use gemphy::{knot::GeometricKnot, medium::{GeometricEncodedMedium}};
+use physical_constants::ELEMENTARY_CHARGE;
 
 fn main() -> std::io::Result<()> {
 
@@ -22,8 +23,16 @@ fn main() -> std::io::Result<()> {
     println!("{:#?}", neutron_star);
 
     println!("Result: {:#?}", result);
+
+    println!("muon:                {:#?}", test_mass);
+    println!("proton:              {:#?}", neutron_star);
+    println!("Result:              {:#?}", result);
+    println!("er1 (eV):            {:#?}", result.er1.norm()/ ELEMENTARY_CHARGE);
+    println!("ei1 (eV):            {:#?}", result.ei1.norm()/ ELEMENTARY_CHARGE);
+    println!("binding_energy (eV): {:#?}", result.binding_energy.norm()/ ELEMENTARY_CHARGE);
+    println!("Go :                 {:#?}", result.g_o);
     
-println!("Result: {:12e}", result.g1);
-println!("Result: {:12e}", result.g2);
+    println!("Result: {:12e}", result.g1);
+    println!("Result: {:12e}", result.g2);
     Ok(())
 }

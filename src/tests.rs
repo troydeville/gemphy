@@ -1,4 +1,4 @@
-use crate::{knot::GeometricKnot, medium::{ELEM_CHARGE, GAMMA_P, GeometricEncodedMedium}};
+use crate::{knot::GeometricKnot, medium::{ELEM_CHARGE, GAMMA_P, GeometricEncodedMedium}, s_constant};
 use num_complex::Complex64;
 use physical_constants::{self}; 
 
@@ -128,4 +128,64 @@ fn test_orbit_generation() {
     assert!(tangential_vel > 0.0, "No tangential velocity generated!");
     
     println!("Orbit Start Confirmed. Tangential Vel: {:.4e}", tangential_vel);
+}
+
+#[test]
+fn test_gem_unification_checklist() {
+    let medium = GeometricEncodedMedium::new();
+    
+    // 1. Define the "Checklist" entities (Mass, Topology, Name)
+    let entities = vec![
+        (9.1093837139e-31, -1.0, "Electron"),
+        (1.883531627e-28, -1.0, "Muon"),
+        (3.16754e-27, -1.0, "Tau"),
+        (1.67262192595e-27, 1.0, "Proton"),
+        (medium.m_p, 0.0, "Planck Mass"), // Singularity limit
+    ];
+
+    println!("\n--- GEM Unification Checklist Verification ---");
+    println!("{:<15} | {:<12} | {:<12} | {:<12}", "Entity Pair", "G_Recovered", "Er1 (eV)", "Ei1 (eV)");
+    println!("{:-<60}", "");
+
+    // 2. Iterate through discrete combinations to find stable "Knots"
+    for i in 0..entities.len() {
+        for j in i..entities.len() {
+            let (m1, top1, name1) = entities[i];
+            let (m2, top2, name2) = entities[j];
+
+            let knot1 = GeometricKnot::new(medium.clone(), m1, &[top1], 0.0, name1);
+            let knot2 = GeometricKnot::new(medium.clone(), m2, &[top2], 0.0, name2);
+
+            // 3. Calculate Resonant Distance d = sqrt(rg1^2 + rg2^2)
+            // rg = Gamma_p / (mass * alpha)
+            let rg1 = (GAMMA_P / (knot1.mass * medium.alpha)).powi(2);
+            let rg2 = (GAMMA_P / (knot2.mass * medium.alpha)).powi(2);
+            let d_resonant = (rg1 + rg2).sqrt();
+
+            // 4. Execute the Interaction
+            let result = medium.calculate_interaction(&knot1, &knot2, d_resonant.into());
+
+            // 5. Verify Unification Checklist Items
+            let g_match = (result.g_recovered.re - medium.g).abs() < 1e-25;
+            
+            // Phase Alignment Ratio (Resonance Signature)
+            // let resonance_ratio = (result.ei1 / result.er1).norm();
+
+            println!("{:<6}-{:<8} | {:.6e} | {:.4e} | {:.4e}", 
+                name1, name2, 
+                result.g_recovered.re, 
+                result.er1.norm() / ELEM_CHARGE, 
+                result.ei1.norm() / ELEM_CHARGE
+            );
+
+            // Assertions for the Checklist
+            assert!(g_match, "G Recovery failed for {} - {}", name1, name2);
+            assert!(result.er1.norm() > 0.0, "Real Potential should be non-zero");
+        }
+    }
+}
+
+#[test]
+fn show_torus_base_radius() {
+    println!("{}", s_constant());
 }

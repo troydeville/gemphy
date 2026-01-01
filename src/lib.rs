@@ -9,16 +9,55 @@
 //! * **Finite Geometry:** No singularities. All action is confined by the Horn Torus volume.
 //! * **Unified Constants:** Mass and Charge are geometrically linked via $\Gamma$ and $\Xi$.
 //! 
+//! 
+
+use serde::Serialize;
+use wasm_bindgen::prelude::*;
+
+// Inside gemphy/src/lib.rs
+#[wasm_bindgen]
+pub fn wasm_calculate_interaction(m1: f64, top1: f64, m2: f64, top2: f64, dist: f64) -> JsValue {
+    let medium = medium::GeometricEncodedMedium::new();
+    let knot1 = knot::GeometricKnot::new(medium.clone(), m1, &[top1], 0.0, "p1");
+    let knot2 = knot::GeometricKnot::new(medium.clone(), m2, &[top2], 0.0, "p2");
+    
+    let result = medium.calculate_interaction(&knot1, &knot2, num_complex::Complex64::from(dist));
+
+    let freq = medium.calculate_mass_frequency(m1);
+
+    #[derive(Serialize)]
+    struct WasmResponse {
+        result: GemInteractionResult,
+        frequency: f64,
+    }
+
+    serde_wasm_bindgen::to_value(&WasmResponse { result, frequency: freq }).unwrap()
+}
+
+pub mod complex_serde {
+    use num_complex::Complex64;
+    use serde::{self, Serializer, ser::SerializeStruct};
+
+    pub fn serialize<S>(val: &Complex64, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut state = serializer.serialize_struct("Complex64", 2)?;
+        state.serialize_field("re", &val.re)?;
+        state.serialize_field("im", &val.im)?;
+        state.end()
+    }
+}
+
 
 use std::f64::consts::PI;
 
 use physical_constants::PLANCK_CONSTANT;
 
-use crate::medium::{ALPHA, C, GAMMA_P};
+use crate::medium::{ALPHA, C, GAMMA_P, GemInteractionResult};
 
 pub mod medium;
 pub mod knot;
-pub mod system;
 pub mod geometry;
 pub mod dynamics;
 

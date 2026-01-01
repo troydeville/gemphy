@@ -1,6 +1,7 @@
 use std::f64::consts::{PI, SQRT_2};
 use num_complex::{Complex64, ComplexFloat};
 use physical_constants::ELEMENTARY_CHARGE;
+use serde::Serialize;
 
 use crate::knot::GeometricKnot;
 
@@ -18,24 +19,47 @@ pub const G: f64 = (4.0 * PI * PHI_Q)/((SQRT_2 * 1.3313353638) * PHI_M);
 pub const GAMMA_P: f64 = ELEM_CHARGE * ELEM_CHARGE / ALPHA_P;
 pub const GAMMA: f64 = GAMMA_P * ALPHA;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct GemInteractionResult {
+    #[serde(with = "crate::complex_serde")]
     pub q1: Complex64,
+    #[serde(with = "crate::complex_serde")]
     pub q2: Complex64,
+    #[serde(with = "crate::complex_serde")]
     pub q_total: Complex64,
+    #[serde(with = "crate::complex_serde")]
     pub af1: Complex64,
+    #[serde(with = "crate::complex_serde")]
     pub af2: Complex64,
+    #[serde(with = "crate::complex_serde")]
     pub g1: Complex64,
+    #[serde(with = "crate::complex_serde")]
     pub g2: Complex64,
+    #[serde(with = "crate::complex_serde")]
     pub force: Complex64,
+    #[serde(with = "crate::complex_serde")]
     pub curvature: Complex64,
+    #[serde(with = "crate::complex_serde")]
     pub g_o: Complex64,
+    #[serde(with = "crate::complex_serde")]
     pub g_recovered: Complex64,
+    #[serde(with = "crate::complex_serde")]
     pub binding_energy: Complex64,
-    pub er1: Complex64, pub er2: Complex64,
-    pub ei1: Complex64, pub ei2: Complex64,
-    pub f1: Complex64, pub f2: Complex64,
+    #[serde(with = "crate::complex_serde")]
+    pub er1: Complex64,
+    #[serde(with = "crate::complex_serde")]
+    pub er2: Complex64,
+    #[serde(with = "crate::complex_serde")]
+    pub ei1: Complex64,
+    #[serde(with = "crate::complex_serde")]
+    pub ei2: Complex64,
+    #[serde(with = "crate::complex_serde")]
+    pub f1: Complex64,
+    #[serde(with = "crate::complex_serde")]
+    pub f2: Complex64,
+    #[serde(with = "crate::complex_serde")]
     pub distance_natural: Complex64,
+
     pub force_norm: f64,
     pub schwarzschild_radius: f64,
 }
@@ -43,7 +67,7 @@ pub struct GemInteractionResult {
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum ForceProtocol { Gravity, Electromagnetism }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct GeometricEncodedMedium {
     pub h: f64, pub e: f64, pub c: f64, pub s: f64,
     pub alpha: f64, pub gamma: f64, pub g: f64, pub epsilon_o: f64,

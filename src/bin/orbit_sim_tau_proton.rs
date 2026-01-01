@@ -11,7 +11,7 @@ use std::io::Write;
 fn main() -> std::io::Result<()> {
     let medium = GeometricEncodedMedium::new();
 
-    let m1 = physical_constants::ELECTRON_MASS;
+    let m1 = physical_constants::TAU_MASS;
     let m2 = physical_constants::PROTON_MASS;
 
     // 1. Setup Particles
@@ -23,17 +23,17 @@ fn main() -> std::io::Result<()> {
         "Proton"
     );
 
-    let electron_knot = GeometricKnot::new(
+    let tau_knot = GeometricKnot::new(
         medium.clone(),
         m1, 
         &[-1.0], 
         GAMMA / (m1 * ALPHA.powi(2)),
-        "Electron"
+        "Tau"
     );
 
     // 2. Geometric Configuration
-    let freq = medium.calculate_mass_frequency(electron_knot.mass);
-    let r_start = electron_knot.binding_radius; 
+    let freq = medium.calculate_mass_frequency(tau_knot.mass);
+    let r_start = tau_knot.binding_radius; 
 
     // --- DYNAMIC STABILITY FIX ---
     let initial_dist = Spatial4D::new(
@@ -43,7 +43,7 @@ fn main() -> std::io::Result<()> {
     // FIX: Swap order to (Electron, Proton) so m1=Electron. 
     // This aligns with the Mathematica derivation for Energy formulas.
     // Force magnitude remains the same (Newton's 3rd Law).
-    let interaction_init = medium.calculate_interaction(&electron_knot, &proton_knot, initial_dist.magnitude());
+    let interaction_init = medium.calculate_interaction(&tau_knot, &proton_knot, initial_dist.magnitude());
     
     let force_magnitude = interaction_init.force.norm();
     
@@ -66,7 +66,7 @@ fn main() -> std::io::Result<()> {
     );
     
     let mut electron = DynamicKnot::new(
-        electron_knot.clone(), 
+        tau_knot.clone(), 
         initial_dist
     );
 
@@ -77,7 +77,7 @@ fn main() -> std::io::Result<()> {
         Complex64::zero()
     );
 
-    let mut file = File::create("orbit_trajectory.csv")?;
+    let mut file = File::create("orbit_trajectory_tau_proton.csv")?;
     writeln!(file, "step,time,x,y,vx,vy,F,Er1,Ei1,Et")?;
 
     let steps = 50000; 
