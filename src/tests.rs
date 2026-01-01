@@ -1,4 +1,4 @@
-use crate::{knot::GeometricKnot, medium::{ELEM_CHARGE, GAMMA_P, GeometricEncodedMedium}, s_constant};
+use crate::{knot::GeometricKnot, medium::{ELEM_CHARGE, GAMMA_P, GeometricEncodedMedium}};
 use num_complex::Complex64;
 use physical_constants::{self}; 
 
@@ -183,9 +183,4 @@ fn test_gem_unification_checklist() {
             assert!(result.er1.norm() > 0.0, "Real Potential should be non-zero");
         }
     }
-}
-
-#[test]
-fn show_torus_base_radius() {
-    println!("{}", s_constant());
 }

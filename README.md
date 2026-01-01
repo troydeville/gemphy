@@ -1,56 +1,47 @@
-# Geometric Encoded Medium (GEM) Framework
+# Geometric Encoded Medium (GEM) Physics Framework
 
-##
-
-### A Geometric Encoded Medium (GEM) Impedance Framework for Physics in Rust
-
-> "The universe is a perfect geometric circuit."
-
-![Version](https://img.shields.io/badge/version-0.2.1-blue) ![License](https://img.shields.io/badge/license-GPL--3.0-green) ![Rust](https://img.shields.io/badge/built_with-Rust-orange) [![Crates.io](https://img.shields.io/crates/v/gemphy.svg)](https://crates.io/crates/gemphy) [![Docs](https://docs.rs/gemphy/badge.svg)](https://docs.rs/gemphy) [![CI](https://github.com/troydeville/gemphy/workflows/CI/badge.svg)](https://github.com/troydeville/gemphy/actions)
+![Version](https://img.shields.io/badge/version-0.2.2-blue) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) ![Rust](https://img.shields.io/badge/built_with-Rust-orange) [![Crates.io](https://img.shields.io/crates/v/gemphy.svg)](https://crates.io/crates/gemphy) [![Docs](https://docs.rs/gemphy/badge.svg)](https://docs.rs/gemphy) [![CI](https://github.com/troydeville/gemphy/workflows/CI/badge.svg)](https://github.com/troydeville/gemphy/actions)
 
 ---
 
 ## 🌌 Overview
 
-The **GEM Framework** is a Rust library that models reality not as a collection of arbitrary forces and constants, but as a single **Geometric Encoded Medium**. It posits that space itself has impedance ($Z_p$) and geometry (**Horn Torus topology**), and that all physical phenomena—Gravity, Electromagnetism, Mass, and Charge—are simply different "encodings" running on this geometric hardware.
+The **GEM Framework** is a Rust library that models reality as a single **Geometric Encoded Medium**. It posits that space-time is a medium with intrinsic impedance ($Z_p$) and a **Horn Torus topology**. All physical phenomena—Gravity, Electromagnetism, Mass, and Charge—are derived as specific "encodings" on this geometric hardware.
 
-This library does not approximate physics; it **derives** it. By defining a few geometric axioms, it mathematically derives Newton's Gravitational Constant ($G$), the Fine Structure Constant ($\alpha$), and the Proton Radius from first principles. Validations match CODATA with high precision (e.g., α rel error -5.47e-10, G rel error 3.86e-6).
+Unlike traditional physics engines that rely on curve-fitting or arbitrary constants, GEM **derives** fundamental values like Newton's Gravitational Constant ($G$), the Fine Structure Constant ($\alpha$), and the Proton Radius from first-principles geometric axioms.
 
-For a visual of the horn torus topology:
+## 🧠 Core Philosophy: The Unified Phase Engine
 
-## 🧠 Core Philosophy
+In GEM, the universe operates as a geometric circuit:
 
-In GEM, the universe is treated as a software system:
-
-- **The Hardware:** A "Horn Torus" topology representing the vacuum medium.
-- **The Operating System:** The Impedance Field ($Z_0, Z_p$) that dictates how information moves.
-- **The Software:**
-  - **Gravity:** The interaction when the medium is encoded with Mass (Shadow Charge $Q = \Xi M$).
-  - **Electromagnetism:** The interaction when the medium is encoded with Electric Charge ($q$).
-
-Complex phases handle extreme scales (e.g., Planck or black holes), rotating real forces into imaginary (rotational/spin) components.
+* **The Hardware:** A Horn Torus manifold ($R = r$) where the singularity at the center acts as a topological pump.
+* **The Phase:** Interactions are not just magnitudes; they are complex vectors. Extreme scales (Planck, Black Holes, Muonic states) rotate real linear forces into **Imaginary/Rotational components**.
+* **The Whirl:** Particle "Spin" is visualized as a **Traveling Wave** of energy density orbiting the singularity, rather than a point-particle rotating in a void.
 
 ## Roadmap
 
+| Milestone | Tasks |
+|-----------|-------|
+| v0.3      | Add horn torus simulation; enhanced orbit sims (hydrogen, muonic, neutron star) |
+| v0.4      | Interactive CLI; Python bindings; initial multi-body support |
+| v0.5      | gemphy-web deployment with live visualizations; basic n-body examples (e.g., Sun-Earth-Moon) |
+| v1.0      | Full predictions (e.g., dark matter as impedance, novel deviations in fine structure); arXiv preprint with derivations |
+
 | Milestone | Tasks
 |-----------|-------
-| v0.3      | Add horn torus simulation; publish crate
-| v0.4      | Interactive CLI; Python bindings
+| v0.3      | Add horn torus simulation
+| v0.4      | Interactive CLI
 | v1.0      | Full predictions (e.g., dark matter as impedance)
 
 ---
 
+## 🚀 Quick Start
+
 ## 📦 Installation
-
-```bash
-cargo add gemphy
-```
-
-Install via Cargo:
 
 ```toml
 [dependencies]
-gemphy = "0.2.1"
+gemphy = "0.2.2"
 ```
 
 Note: Re-exports `Complex64` from `num-complex`.
@@ -79,119 +70,136 @@ cargo run --bin neutron_star_action
 
 ---
 
-### 3. Constants & Model Specification
+### Stable Orbit Simulation
 
-#### I. Fundamental Physical Constants
+GEMPHY handles the "Dynamic Stability" of orbits by calculating the interaction between geometric knots.
 
-These are the fixed, integer-defined values representing the bedrock of the SI system used in the model.
+```rust
+use gemphy::{knot::GeometricKnot, medium::{GAMMA_P, GeometricEncodedMedium}};
+use physical_constants::{ELECTRON_MASS, PROTON_MASS, ELEMENTARY_CHARGE};
 
-- **Planck Constant ($h$):** The quantum of action.
-$$h = \frac{662607015}{10^{42}} \text{ J/Hz}$$
+fn main() {
+    let m1 = ELECTRON_MASS;
+    let m2 = PROTON_MASS;
+    
+    let medium = GeometricEncodedMedium::new();
 
-- **Speed of Light ($c$):** The universal speed limit.
-$$c = 299792458 \text{ m/s}$$
+    // Setup Particles as Geometric Knots
+    let electron = GeometricKnot::new(medium.clone(), m1, &[-1.0], 0.0, "Electron");
+    let proton = GeometricKnot::new(medium.clone(), m2, &[1.0], 0.0, "Proton");
 
-- **Elementary Charge ($e$):** The fundamental unit of charge.
-$$e = \frac{1602176634}{10^{28}} \text{ C}$$
+    let rg1 = (GAMMA_P / (electron.mass * medium.alpha)).powi(2);
+    let rg2 = (GAMMA_P / (proton.mass * medium.alpha)).powi(2);
+    let d = (rg1+rg2).sqrt();
 
-#### II. Scaling & Geometric Factors
+    let interaction = medium.calculate_interaction(&electron, &proton, d.into());
+    
+    println!("Result:             {:#?}", interaction);
+    println!("Er (eV):            {:#?}", interaction.er1.norm()/ ELEMENTARY_CHARGE);
+    println!("Ei (eV):            {:#?}", interaction.ei1.norm()/ ELEMENTARY_CHARGE);
+    println!("E  (eV):            {:#?}", interaction.binding_energy.norm()/ ELEMENTARY_CHARGE);
+}
 
-These parameters act as scaling bridges between the quantum/electromagnetic scale and the gravitational scale.
+```
 
-- **Magnetic Scaling Constant ($\Phi$):** A scaling factor with dimensions of inductance per meter.
-$$\Phi = \frac{1}{10^7} \text{ H/m}$$
+---
 
-- **Mass-Charge Metric ($\phi$):** A density-like scalar connecting mass and charge squared.
+## 📐 The Geometric Model
+
+### I. Fundamental Scaling
+
+The framework uses a fundamental geometric normalization constant to bridge the subatomic and cosmic scales:
+
+* **Normalization Constant ($S$):**
+$$({4 \pi})^{1/4} \approx 1.8827925275534296$$
+
+* **Mass-Charge Metric ($\phi$):**
 $$\phi = 10^4 \text{ kg}^2 \text{ m}^{-2} \text{ s}^2 \text{ C}^{-2}$$
 
-- **Alpha-Lambda Function ($\Lambda_\alpha(n)$):** A rational function governing specific integer-ratio field interactions.
-$$\Lambda_\alpha(n) = \frac{\alpha_\delta n}{\alpha_\gamma + 2 \alpha_\delta n^2}$$
+* **Magnetic Scaling ($\Phi$):**
+$$\Phi = \frac{1}{10^7} \text{ H/m}$$
 
-#### III. Primary Field Parameters (Planck Scale)
+* **Primary Impedance ($Z_p$):**
+$$Z_p = \frac{2h}{e^2} \Omega$$
 
-These variables (-subscript) represent the theoretical "maximum" impedance and field density before fine-structure scaling is applied.
+#### Fine Structure ($\alpha$) Scaling Relationships
 
-- **Primary Impedance ($Z_p$):**
-$$Z_p = \frac{2h}{e^2}$$
-
-- **Primary Fine Structure ($\alpha_p $):** The geometric inverse of impedance.
+* **Primary Fine Structure ($\alpha_p $):**
 $$\alpha_p = \frac{4\pi c}{Z_p}$$
 
-- **Primary Field Constants:** Permeability ($\mu_p$), Permittivity ($\epsilon_p$), and the Gamma factor ($\Gamma_p$).
-$$\mu_p = \frac{Z_p}{c}$$
-$$\epsilon_p = \frac{1}{c Z_p}$$
-$$\Gamma_p = \frac{e^2}{\alpha_p}$$
+* **Fine Structure ($\alpha $):**
+$$\alpha = \frac{4\pi c}{Z_p} \Phi$$
 
-#### IV. Vacuum Field Parameters (Observable)
+* **Impedance ($Z_p$, $Z_o$):**
+$$\alpha Z_p \implies Z_0$$
 
-These are the standard observable vacuum constants, derived by scaling the primary parameters by the fine structure constant ($).
+<!-- * **Primary Impedance ($Z_p$):**
+$$Z_p = \frac{2h}{e^2} \implies \alpha Z_p = Z_0$$
 
-- **Fine Structure Constant ($\alpha $):**
-$$\alpha = \alpha_p \Phi$$
+* **Primary Fine Structure ($\alpha_p $):**
+$$\alpha_p = \frac{4\pi c}{Z_p}$$ -->
 
-- **Vacuum Impedance ($Z_0$):**
-$$Z_0 = \alpha Z_p$$
+* **Permeability ($\mu_p $):**
+$$\mu_p = \frac{Z_p}{c} \implies \mu_0 = \alpha \mu_p$$
+<!-- Scaled with ($\alpha$):
+$$\alpha \mu_p \Rightarrow \mu_0$$ -->
+<!-- $$\frac{1}{c} (\alpha Z_p) \implies \mu_0$$ -->
 
-- **Vacuum Permeability & Permittivity ($\mu_0$, $\epsilon_0$):**
-$$\mu_0 = \frac{Z_0}{c}$$
-$$\epsilon_0 = \frac{1}{c Z_0}$$
+* **Permittivity ($\epsilon_p$)**
+$$\epsilon_p = \frac{1}{c Z_p} \implies \epsilon_0 = \frac{1}{\alpha} \epsilon_p $$
 
-- **Vacuum Gamma ($\Gamma$):**
-$$\Gamma = \alpha \Gamma_p$$
+<!-- \implies \epsilon_0$$
+$$\frac{1}{c} (\frac{1}{\alpha Z_p}) \implies \epsilon_0$$ -->
 
-#### V. Gravitational Unification
+* **Gamma factor ($\Gamma_p$)**
+$$\Gamma_p = \frac{e^2}{\alpha_p} \implies \Gamma = \frac{\Gamma_p}{\alpha}$$
 
-The model derives the Gravitational Constant ($G$) not as a fundamental arbitrary value, but as a result of geometric impedance scaling.
+### II. Gravitational Unification
 
-- **Gravitational Constant ($G$):**
-
+GEM derives $G$ as a result of geometric impedance scaling rather than an empirical measurement:
+Where $Z_0$ is the vacuum impedance and $S$ is the geometric shape factor:
 $$
 G = \frac{Z_0}{c S \phi}
 [\frac{m^3}{kg s^2}]
 $$
 
-- **Complex Unification Factor ($\Xi$):** A complex rotation relating field geometry to mass-charge equivalence.
+<!-- **Complex Unification Factor ($\Xi$)**
 
-$$
-\Xi = \sqrt{4\pi \sqrt{2} G \epsilon_0} \left( \cos\frac{\pi}{8} - i \sin\frac{\pi}{8} \right)
-[C/kg]
-$$
+A complex rotation relating field geometry to mass-charge equivalence. -->
 
-#### VI. Mass & Length Scales
+### III. Complex Geometry
 
-Definitions of the Planck scale and the specific derivation of the Proton Mass.
+**A complex rotation relating field geometry to mass-charge equivalence. ($\Xi$)**
+$$\Xi = \sqrt{4\pi \sqrt{2} G \epsilon_0} \left( \cos\frac{\pi}{8} - i \sin\frac{\pi}{8} \right)[C/kg]$$
 
-- **Planck Units ($m_P$, $l_P$):**
-$$m_P = \sqrt{\frac{ch}{2\pi G}}$$
-$$l_P = \sqrt{\frac{hG}{2\pi c^3}}$$
+Force is calculated as a complex vector.
 
-- **Proton Mass ($m_p$):** A derivation scaling the Planck mass by exponential and geometric corrections.
-$$m_p = e^{-14\pi} \left( 1 - \frac{1}{2^{11}-4} \right) m_P \left( 1 - \frac{4 \alpha_\gamma}{\alpha_\delta} \right)$$
+#### Linked Complex Potentials ($E_r$, $E_i$)
 
-- **Mass-Charge Equivalence ($Q$):** A unified charge definition based on mass  and the complex factor .
-$$Q = M \Xi$$
+Energy interaction in GEM is calculated as the sum of two body-specific complex potentials. Each potential represents the geometric "tension" localized to that body within the medium:
 
-### 4. Interaction Examples
+* **$E_r$:** Complex potential of Body 1 (e.g., the orbiting mass).
+* **$E_i$:** Complex potential of Body 2 (e.g., the central mass).
+* **Total Interaction Energy ($E_r + E_i$):** .
 
-### 5. The Unified Force (Complex Phase Engine)
-
-What happens inside a Black Hole or at the Planck Scale? Standard physics breaks down. GEM handles this by rotating the force vector into the **Imaginary Plane**.
-
-- **Real Force:** Linear Acceleration (Push/Pull).
-- **Imaginary Force:** Rotational Action (Spin/Memory).
-
-Kappa ($\kappa$) in GEM is similar to Einstein's curvature in general relativity, coupling mass to geometry via the complex unification factor $\Xi$. It derives as $\kappa = \Xi \frac{M + m}{Q_{sh} + q_{sh}}$, where $Q_{sh} = \Xi M$ (shadow charge), simplifying to a phased unit complex in gravity-dominated regimes.
-
-<!-- end list -->
+The relationship between $E_r$ and $E_i$ is intrinsically linked by the medium's impedance. As distance or energy density changes, these values rotate in the complex plane, representing the transition from linear work to orbital/spin action.
 
 ---
 
-## Contributing
+## 🛠 Visualization: The Horn Torus Manifold
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for details on issues, PRs, and development setup.
+The provided `HornTorusManifold` component (for Three.js/React) is a **Raw Scientific Viewer** designed to mirror the Rust engine's output:
+
+* **Traveling Waves:** Total Energy ($E$) is treated as a complex phase. This phase drives a wave that "chases its tail" around the torus, visually representing particle spin and momentum.
+* **Singularity Flow:** The mesh geometry respects the Horn Torus topology ($R=r$), creating a natural "topological pump" at the center that breathes the vacuum.
+* **No Fakes:** All surface deformations are driven by the `Complex64` results of the physical interaction. If the engine calculates zero energy, the manifold remains stagnant.
+
+---
 
 ## ⚖️ License
 
-This project is licensed under GPL-3.0.
+Licensed under the **MIT License**.
+
+> **Scientific Attribution:** If you use GEMPHY in a research paper or commercial simulation, please cite the framework to preserve the geometric integrity of the medium.
 
 ---

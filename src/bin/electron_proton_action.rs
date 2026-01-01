@@ -28,13 +28,13 @@ fn main() -> std::io::Result<()> {
 
     let result = medium.calculate_interaction(&electron, &proton, d.into());
 
-    println!("muon:                {:#?}", electron);
-    println!("proton:              {:#?}", proton);
-    println!("Result:              {:#?}", result);
-    println!("er1 (eV):            {:#?}", result.er1.norm()/ ELEMENTARY_CHARGE);
-    println!("ei1 (eV):            {:#?}", result.ei1.norm()/ ELEMENTARY_CHARGE);
-    println!("binding_energy (eV): {:#?}", result.binding_energy.norm()/ ELEMENTARY_CHARGE);
-    println!("Go :                 {:#?}", result.g_o);   
+    println!("electron:           {:#?}", electron);
+    println!("proton:             {:#?}", proton);
+    println!("Result:             {:#?}", result);
+    println!("Er (eV):            {:#?}", result.er1.norm()/ ELEMENTARY_CHARGE);
+    println!("Ei (eV):            {:#?}", result.ei1.norm()/ ELEMENTARY_CHARGE);
+    println!("E  (eV):            {:#?}", result.binding_energy.norm()/ ELEMENTARY_CHARGE);
+    println!("Go :                {:#?}", result.g_o);   
 
     Ok(())
 }

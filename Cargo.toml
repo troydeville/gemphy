@@ -1,15 +1,16 @@
 [package]
 name = "gemphy"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2024"
 authors = ["Troy Deville <tsndeville@gmail.com>"]
 description = "GEM Physics: Derives physical constants from geometric impedance in a horn torus vacuum."
 repository = "https://github.com/troydeville/gemphy"
-license = "GPL-3.0"
-keywords = ["physics", "unified-theory", "geometry", "impedance", "simulation"]
-categories = ["science"]
+license = "MIT"
+keywords = ["physics", "unification", "geometry", "simulation"]
+categories = ["science", "simulation"]
 
 [dependencies]
+# gemphy = "0.2.1"
 num-complex = { version = "0.4", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
 csv = "1.3"
