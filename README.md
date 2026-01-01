@@ -27,12 +27,6 @@ In GEM, the universe operates as a geometric circuit:
 | v0.5      | gemphy-web deployment with live visualizations; basic n-body examples (e.g., Sun-Earth-Moon) |
 | v1.0      | Full predictions (e.g., dark matter as impedance, novel deviations in fine structure); arXiv preprint with derivations |
 
-| Milestone | Tasks
-|-----------|-------
-| v0.3      | Add horn torus simulation
-| v0.4      | Interactive CLI
-| v1.0      | Full predictions (e.g., dark matter as impedance)
-
 ---
 
 ## 🚀 Quick Start

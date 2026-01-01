@@ -18,10 +18,14 @@ jobs:
       uses: dtolnay/rust-toolchain@stable
     - name: Build Docs
       run: cargo doc --no-deps
+    - name: Prepare Docs for Upload
+      run: |
+        mkdir -p .pages
+        cp -r target/doc/gemphy/* .pages/ || true
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: ./target/doc
+        path: .pages
 
   deploy:
     needs: build

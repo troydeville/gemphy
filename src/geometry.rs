@@ -142,23 +142,6 @@ impl Mul<Complex64> for Spatial4D {
     }
 }
 
-// /// The Horn Torus Geometry ($R = r = S$).
-// /// Source: <https://mathworld.wolfram.com/HornTorus.html>
-// #[derive(Debug, Clone)]
-// struct HornTorus {
-//     /// The fundamental radius S (Major and Minor radius are equal).
-//     pub r: f64,
-// }
-
-// impl Default for HornTorus {
-//     fn default() -> Self {
-//         let s = SQRT_2 * PI.powf(0.25);
-//         Self { r: s }
-//     }
-// }
-
-
-
 pub trait GemSurface {
     fn radius_a(&self) -> f64;
     fn volume(&self) -> f64;
@@ -179,6 +162,25 @@ pub trait GemSurface {
         v.cos() / denom
     }
 }
+
+// /// The Horn Torus Geometry ($R = r = S$).
+// /// Source: <https://mathworld.wolfram.com/HornTorus.html>
+// #[derive(Debug, Clone)]
+// struct HornTorus {
+//     /// The fundamental radius S (Major and Minor radius are equal).
+//     pub r: f64,
+// }
+
+// impl Default for HornTorus {
+//     fn default() -> Self {
+//         let s = SQRT_2 * PI.powf(0.25);
+//         Self { r: s }
+//     }
+// }
+
+
+
+
 
 // impl GemSurface for HornTorus {
 //     fn radius_a(&self) -> f64 { self.r }
